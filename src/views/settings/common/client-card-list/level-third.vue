@@ -5,7 +5,7 @@
             <div class="name">
                 <div v-hover
                     class="text">
-                    <span>{{values.name}}</span>
+                    <span>{{values.serial}}</span>
                 </div>
 
                 <span class="more">
@@ -25,6 +25,12 @@
                             class="iconfont mas-more1-vertical"></i>
                     </el-popover>
                 </span>
+            </div>
+            <div class="name">
+                <div v-hover
+                    class="text">
+                    <span>{{values.name}}</span>
+                </div>
             </div>
             <div class="time">Updated on {{values.updated_at}}</div>
         </div>
@@ -130,7 +136,7 @@ export default {
   display: flex;
   padding: 15px;
   width: 250px;
-  height: 110px;
+  height: 150px;
   background-color: white;
   border-radius: 5px;
   margin-right: 10px;

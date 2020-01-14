@@ -16,38 +16,10 @@ const state = {
   //属于特定的client
   allSubRoute: [
     // { key: "corp-overview", name: "Corp Overview", layout:[] },
-  ],
-  enableSubRoute: []
+  ]
 };
-const getters = {
-  // 获取左侧二级菜单列表
-  // homeSubRoute: state => {
-  //   let enableSubMenu = state.allSubRoute.filter(menu => {
-  //     let has = state.enableSubRoute.find(item => {
-  //       return (
-  //         item.subRoute.toLocaleUpperCase() == menu.name.toLocaleUpperCase()
-  //       );
-  //     });
-  //     return has;
-  //   });
-  //   return enableSubMenu;
-  // }
-};
+const getters = {};
 const mutations = {
-  /**
-   * 登录成功后，更新 当前用户有哪些菜单权限可用
-   */
-  UPDATE_ENABLE_SUB_ROUTE(state, menus) {
-    let sub = menus.find(menu => {
-      return menu.root == "HOME";
-    });
-    if (sub) {
-      state.enableSubRoute = sub.children;
-    } else {
-      state.enableSubRoute = [];
-    }
-  },
-
   UPDATE_SUB_MENU_CLIENT(state, data) {
     state.subMenuClient = data.client;
   },
@@ -71,9 +43,9 @@ const mutations = {
    * 重置 state
    */
   REST_STATE(state) {
-    state.enableSubRoute = [];
-    state.allSubRoute = [];
+    state.currentSubMenuKey = "";
     state.subMenuClient = "";
+    state.allSubRoute = [];
   }
 };
 const actions = {
@@ -96,7 +68,6 @@ const actions = {
         });
     });
   },
-
 
   /**
    * 通过client获取 sub menu list

@@ -570,7 +570,7 @@ export default {
 <style lang="scss" scoped>
 .roll-trake-zoom-in {
   overflow: visible;
-  /deep/ .el-dialog {
+  ::v-deep .el-dialog {
     display: flex;
     flex-direction: column;
     margin-top: 2vh !important;

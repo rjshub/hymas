@@ -10,7 +10,7 @@
                         size="mini"
                         filterable
                         placeholder="Select Client"
-                        style="width:150px;margin-right:10px"
+                        style="width:150px;margin-right:5px"
                         @change="get_card_list">
                         <el-option v-for="(item,index) in clientOptions"
                             :key="index"
@@ -153,6 +153,9 @@ export default {
       display: flex;
       justify-content: space-between;
       text-align: right;
+      * {
+        vertical-align: middle;
+      }
     }
 
     .cards {

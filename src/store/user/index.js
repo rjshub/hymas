@@ -83,13 +83,14 @@ const actions = {
               root: true
             });
 
-            commit("common/UPDATE_DATA_SOURCE_OPTIONS", res.data.dataSourceOptions, {
-              root: true
-            });
+            commit(
+              "common/UPDATE_DATA_SOURCE_OPTIONS",
+              res.data.dataSourceOptions,
+              {
+                root: true
+              }
+            );
 
-            commit("home/UPDATE_ENABLE_SUB_ROUTE", res.data.menu, {
-              root: true
-            });
             commit("reportCenter/UPDATE_ENABLE_SUB_ROUTE", res.data.menu, {
               root: true
             });

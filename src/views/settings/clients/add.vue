@@ -5,7 +5,7 @@
         :close-on-press-escape="false"
         :destroy-on-close="true"
         :visible="true"
-        width="710px"
+        width="720px"
         @close="handle_close">
         <el-form :model="addForm"
             v-loading="isLoading"
@@ -17,14 +17,42 @@
                 <div>Name</div>
                 <el-input v-model="addForm.name"></el-input>
             </el-form-item>
+            <el-form-item prop="industry">
+                <div>Please select the industry of the client</div>
+                <el-select v-model="addForm.industry"
+                    size="mini"
+                    filterable
+                    placeholder="Select Industry"
+                    style="width:100%">
+                    <el-option v-for="(item,index) in industryOptions"
+                        :key="index"
+                        :label="item.name"
+                        :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item prop="deadline">
+                <div>Please select the customer's fiscal year deadline</div>
+                <el-select v-model="addForm.deadline"
+                    size="mini"
+                    filterable
+                    placeholder="Select Deadline"
+                    style="width:100%">
+                    <el-option v-for="(item,index) in deadlineOptions"
+                        :key="index"
+                        :label="item.name"
+                        :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item prop="roles">
                 <div> Please select Roles who has this client permission</div>
                 <role-select-tree class="role-select-tree"
                     :has-filter="true"
                     :values="rolesTreeData"
-                    :defaultSelectedValues="rolesTreeData"
-                    :defaultProps="{children:'children', label:'name'}"
-                    :defaultSelectedKeys="selectedKeys"
+                    :default-selected-values="rolesTreeData"
+                    :default-props="{children:'children', label:'name'}"
+                    :default-selected-keys="selectedKeys"
                     width="300px"
                     height="300px"
                     @update:add="treeUpdateAdd"
@@ -58,6 +86,7 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import treeJs from "element-tree-js";
+import fetch from "@/services/fetch";
 import roleSelectTree from "@/components/common/select-tree";
 
 export default {
@@ -78,6 +107,10 @@ export default {
     type: {
       // client，brand，product
       type: String,
+      require: true
+    },
+    industryOptions: {
+      type: Array,
       require: true
     }
   },
@@ -105,15 +138,20 @@ export default {
       addForm: {
         id: "",
         name: "",
+        industry: "",
+        deadline: "",
         roles: [],
         users: [],
         parent_id: "0"
       },
       rules: {
         name: [{ validator: validateName, trigger: "blur" }],
+        industry: [{ required: true, message: "Industry is required", trigger: "change" }],
+        deadline: [{ required: true, message: "Deadline is required", trigger: "change" }],
         roles: [{ validator: validateRole, trigger: "blur" }]
       },
 
+      deadlineOptions: [],
       rolesTreeData: [],
       selectedKeys: []
     };
@@ -125,7 +163,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("settings", ["fetch_client_add", "fetch_client_edit", "fetch_users_by_roles", "fetch_user_role_list", "fetch_client_detail"]),
+    ...mapActions("settings", ["fetch_users_by_roles", "fetch_user_role_list_self"]),
 
     async init() {
       //设置title
@@ -138,7 +176,8 @@ export default {
 
       try {
         this.isLoading = true;
-        await this.get_roles_list();
+
+        await Promise.all([this.get_roles_list(), this.get_deadline_list()]);
 
         if (this.isEdit) {
           this.addForm.id = this.ids.currentId;
@@ -156,7 +195,7 @@ export default {
     },
     async get_roles_list() {
       try {
-        let res = await this.fetch_user_role_list({ id: this.userId });
+        let res = await this.fetch_user_role_list_self({ id: this.userId });
         let result = [];
         let child = {};
         for (let item of res) {
@@ -174,56 +213,69 @@ export default {
       }
     },
 
+    async get_deadline_list() {
+      let data = [{ id: 1, name: "The end of Jan" }, { id: 2, name: "The end of Feb" }, { id: 3, name: "The end of Mar" }];
+
+      try {
+        // let { data } = await fetch.post("/maintenance/verified_list", params);
+        this.deadlineOptions = data;
+      } catch (err) {
+        this.$message.error(err.message);
+      }
+    },
+
     async get_form_detail() {
       try {
-        let res = await this.fetch_client_detail({ id: this.ids.currentId, type: this.type });
-        this.addForm.id = res.id;
-        this.addForm.name = res.name;
-        this.addForm.roles = res.role_ids;
+        let { data } = await fetch.post("/user/clientdetail", { id: this.ids.currentId, type: this.type });
+        this.addForm.id = data.id;
+        this.addForm.name = data.name;
+        this.addForm.industry = data.industry_id;
+        this.addForm.deadline = data.deadline_id;
+        this.addForm.roles = data.role_ids;
         this.selectedKeys = treeJs.getTreeDestList(this.rolesTreeData, "id", this.addForm.roles, "key");
-        await this.get_users_by_roles();
+        this.get_users_by_roles();
       } catch (err) {
         this.$message.error(err.message);
       }
     },
 
     handle_submit() {
-      this.$refs["addForm"].validate(valid => {
+      this.$refs["addForm"].validate(async valid => {
         if (valid) {
           let param = {};
           if (this.isEdit) {
             param = {
               id: this.addForm.id,
               name: this.addForm.name,
+              industry_id: this.addForm.industry,
+              deadline_id: this.addForm.deadline,
               type: this.type,
               role_ids: this.addForm.roles
             };
 
             //编辑
-            this.fetch_client_edit(param)
-              .then(res => {
-                this.resetForm();
-                this.$emit("submit");
-              })
-              .catch(err => {
-                this.$message.error(err.message);
-              });
+            await fetch.post("/user/editclient", param).catch(err => {
+              this.$message.error(err.message);
+            });
+
+            this.resetForm();
+            this.$emit("submit");
           } else {
             param = {
               name: this.addForm.name,
+              industry_id: this.addForm.industry,
+              deadline_id: this.addForm.deadline,
               parent_id: this.addForm.parent_id,
               type: this.type,
               role_ids: this.addForm.roles
             };
 
-            this.fetch_client_add(param)
-              .then(res => {
-                this.resetForm();
-                this.$emit("submit");
-              })
-              .catch(err => {
-                this.$message.error(err.message);
-              });
+            await fetch.post("/user/addclient", param).catch(err => {
+              this.$message.error(err.message);
+            });
+
+            this.resetForm();
+            this.$emit("submit");
           }
         } else {
           return false;
@@ -231,15 +283,13 @@ export default {
       });
     },
 
-    get_users_by_roles() {
-      return this.fetch_users_by_roles({ id: this.addForm.roles.filter(item => item != undefined) })
-        .then(res => {
-          this.addForm.users = res;
-          this.$refs["addForm"].validateField("roles");
-        })
-        .catch(err => {
-          this.$message.error(err.message);
-        });
+    async get_users_by_roles() {
+      let res = await this.fetch_users_by_roles({ id: this.addForm.roles.filter(item => item != undefined) }).catch(err => {
+        this.$message.error(err.message);
+      });
+
+      this.addForm.users = res;
+      this.$refs["addForm"].validateField("roles");
     },
 
     resetForm() {
@@ -313,7 +363,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .clients__add-dialog {
-  /deep/ .el-dialog {
+  ::v-deep .el-dialog {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -324,6 +374,7 @@ export default {
       padding-top: 10px;
       padding-bottom: 10px;
       height: 600px;
+      overflow: auto;
 
       //滚动条大小
       ::-webkit-scrollbar {

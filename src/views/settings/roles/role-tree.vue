@@ -9,9 +9,9 @@
                     @click="handle_add_permission"></i> -->
             </div>
             <div class="list">
-                <div class="list-item"
-                    v-for="(per,index) in values"
+                <div v-for="(per,index) in values"
                     :key="index"
+                    class="list-item"
                     :class="{active: per.id==activePermissionId}"
                     @click="handle_active_permission(per)">
                     <span class="name">Permission {{index+1}}</span>
@@ -39,46 +39,70 @@
                 <div class="tree-body">
                     <div class="left-tree">
                         <el-tree v-if="isShowTree"
-                            :data="leftTreeList"
                             ref="clientsTree"
+                            :data="leftClientsTreeList"
                             :props="treeProps"
                             default-expand-all
                             :indent="20"
                             show-checkbox
                             node-key="id"
-                            @check-change="handle_leftTree_change"
-                            :default-checked-keys="leftCheckedKeys">
+                            :default-checked-keys="leftClientsCheckedKeys"
+                            @check-change="handle_left_clientsTree_change">
                         </el-tree>
                     </div>
                     <div class="right-tree">
-                        <el-tree v-if="isShowTree"
-                            :data="rightTreeList"
-                            ref="systemTree"
-                            :disabled="disabled"
-                            :props="treeProps"
-                            :indent="20"
-                            default-expand-all
-                            show-checkbox
-                            @check-change="handle_RightTree_change"
-                            :default-checked-keys="rightCheckedKeys"
-                            node-key="id">
-                        </el-tree>
+                        <div class="tree-area">
+                            <div class="tree-header-second">
+                                <div class="left">Custom</div>
+                                <div class="right">Fixed</div>
+                            </div>
+
+                            <div class="tree-body-second">
+                                <div class="left-tree">
+                                    <el-tree v-if="isShowTree"
+                                        ref="customTree"
+                                        :data="rightCustomTreeList"
+                                        :props="treeProps"
+                                        default-expand-all
+                                        :indent="20"
+                                        show-checkbox
+                                        node-key="id"
+                                        :default-checked-keys="rightCustomCheckedKeys"
+                                        @check-change="handle_right_customTree_change">
+                                    </el-tree>
+                                </div>
+                                <div class="right-tree">
+                                    <el-tree v-if="isShowTree"
+                                        ref="fixedTree"
+                                        :data="rightFixedTreeList"
+                                        :disabled="disabled"
+                                        :props="treeProps"
+                                        :indent="20"
+                                        default-expand-all
+                                        show-checkbox
+                                        :default-checked-keys="rightFixedCheckedKeys"
+                                        node-key="id"
+                                        @check-change="handle_right_fixedTree_change">
+                                    </el-tree>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="write-and-read">
                 <template v-for="(per) in values">
                     <el-radio-group v-if="per.id==activePermissionId"
-                        :disabled="disabled"
                         :key="per.id"
-                        v-model="per.type">
+                        v-model="per.type"
+                        :disabled="disabled">
                         <el-radio :label="1">Writable</el-radio>
                         <el-radio :label="2">Readable</el-radio>
                     </el-radio-group>
 
-                    <div class="delete"
-                        v-if="per.id==activePermissionId && values.length>1 && per.is_back!=1"
-                        :key="per.id+'del'">
+                    <div v-if="per.id==activePermissionId && values.length>1 && per.is_back!=1"
+                        :key="per.id+'del'"
+                        class="delete">
                         <el-button size="mini"
                             :disabled="disabled"
                             @click="handle_delete_permission">Delete</el-button>
@@ -112,16 +136,23 @@ export default {
     disabled: {
       type: Boolean,
       deafult: false
+    },
+    defaultId: {
+      type: String
     }
   },
 
   watch: {
     values: {
       handler: function(val) {
-        this.setActivePermissionId(this.activePermissionId);
-        this.setTreeCheckedAndDisabled(this.activePermissionId);
+        this.$nextTick(() => {
+          this.setTreeCheckedAndDisabled(this.activePermissionId);
+        });
       },
       deep: true
+    },
+    defaultId(val) {
+      this.setActivePermissionId(val);
     },
     treeData: {
       handler: function(val) {
@@ -139,13 +170,15 @@ export default {
         children: "children"
       },
 
-      leftTreeList: [], //左侧树list
-      rightTreeList: [], //右侧树list
+      leftClientsTreeList: [], //左侧client树list
+      rightCustomTreeList: [], //右侧custom树list
+      rightFixedTreeList: [], //右侧fixed树list
 
       activePermissionId: "", //当前活动的permission id
 
-      leftCheckedKeys: [], //左树默认选中的 keys
-      rightCheckedKeys: [], //右树默认选中的 keys
+      leftClientsCheckedKeys: [], //左树默认选中的 keys
+      rightCustomCheckedKeys: [], //右树默认选中的 keys
+      rightFixedCheckedKeys: [], //右树默认选中的 keys
 
       timer: null
     };
@@ -154,31 +187,36 @@ export default {
 
   methods: {
     setTreeData() {
-      this.leftTreeList = this.treeData.product;
-      this.rightTreeList = this.treeData.menu;
+      console.log("1");
+      this.leftClientsTreeList = this.treeData.product;
+       console.log("2");
+      this.rightCustomTreeList = this.treeData.menu.custom;
+      this.rightFixedTreeList = this.treeData.menu.fixed;
     },
 
     setActivePermissionId(id) {
-      if (id) {
-        this.activePermissionId = id;
-      } else {
-        this.activePermissionId = this.values[0].id;
-      }
+      this.activePermissionId = id;
     },
 
     /**设置选中和禁用 keys*/
     setTreeCheckedAndDisabled(id) {
       let product_ids = [];
-      let auth_ids = [];
+      let auth_custom_ids = [];
+      let auth_fixed_ids = [];
+
       let product_arr = [];
-      let auth_arr = [];
+      let auth_custom_arr = [];
+      let auth_fixed_arr = [];
 
       //设置禁用
       //找出 除去当前之外所有的id
       for (let item of this.values) {
         if (item.id != id) {
+          console.log("3");
           product_arr.push(item.product);
-          auth_arr.push(item.auth);
+          console.log("4");
+          auth_custom_arr.push(item.auth.custom);
+          auth_fixed_arr.push(item.auth.fixed);
         }
       }
 
@@ -186,28 +224,41 @@ export default {
         product_ids = product_ids.concat(product_arr[i]);
       }
 
-      for (let i in auth_arr) {
-        auth_ids = auth_ids.concat(auth_arr[i]);
+      for (let i in auth_custom_arr) {
+        auth_custom_ids = auth_custom_ids.concat(auth_custom_arr[i]);
+      }
+
+      for (let i in auth_fixed_arr) {
+        auth_fixed_ids = auth_fixed_ids.concat(auth_fixed_arr[i]);
       }
 
       //设置选中
       this.$nextTick(() => {
-        this.leftCheckedKeys = this.values.find(item => item.id == id).product;
+        console.log("5",this.values, id);
+        this.leftClientsCheckedKeys = this.values.find(item => item.id == id).product;
+        console.log("6");
+        this.rightCustomCheckedKeys = this.values.find(item => item.id == id).auth.custom;
+        this.rightFixedCheckedKeys = this.values.find(item => item.id == id).auth.fixed;
 
-        this.rightCheckedKeys = this.values.find(item => item.id == id).auth;
+        //todo
 
         //将id对应的auth_ids节点设置为禁用
 
         if (this.disabled) {
-          this.rightTreeList = treeJs.modifyAllTreeDisabled(this.treeData.menu, true);
+          this.rightCustomTreeList = treeJs.modifyAllTreeDisabled(this.treeData.menu.custom, true);
+          this.rightFixedTreeList = treeJs.modifyAllTreeDisabled(this.treeData.menu.fixed, true);
         }
 
-        //将id对应的auth_ids节点设置为禁用
+        //将id对应的product_ids节点设置为禁用
         if (this.disabled) {
-          this.leftTreeList = treeJs.modifyAllTreeDisabled(this.treeData.product, true);
+           console.log("7");
+          this.leftClientsTreeList = treeJs.modifyAllTreeDisabled(this.treeData.product, true);
+           console.log("8");
         } else {
-          this.leftTreeList = treeJs.modifyTreeNodeDisabled(this.treeData.product, "id", product_ids, true);
+          this.leftClientsTreeList = treeJs.modifyTreeNodeDisabled(this.treeData.product, "id", product_ids, true);
         }
+
+        //todo
 
         this.isShowTree = true;
       });
@@ -241,7 +292,7 @@ export default {
       this.setTreeCheckedAndDisabled(item.id);
     },
 
-    handle_leftTree_change(a, b, c) {
+    handle_left_clientsTree_change(a, b, c) {
       clearTimeout(this.timer);
       this.timer = setTimeout(() => {
         let ids = this.$refs["clientsTree"].getCheckedKeys(true);
@@ -252,13 +303,25 @@ export default {
         }
       }, 250); //防抖时间 150ms
     },
-    handle_RightTree_change(a, b, c) {
+    handle_right_customTree_change(a, b, c) {
       clearTimeout(this.timer);
       this.timer = setTimeout(() => {
-        let ids = this.$refs["systemTree"].getCheckedKeys(true);
+        let ids = this.$refs["customTree"].getCheckedKeys(true);
         for (let i in this.values) {
           if (this.values[i].id == this.activePermissionId) {
-            this.values[i].auth = ids;
+            this.values[i].auth.custom = ids;
+          }
+        }
+      }, 250); //防抖时间 150ms
+    },
+
+    handle_right_fixedTree_change(a, b, c) {
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        let ids = this.$refs["fixedTree"].getCheckedKeys(true);
+        for (let i in this.values) {
+          if (this.values[i].id == this.activePermissionId) {
+            this.values[i].auth.fixed = ids;
           }
         }
       }, 250); //防抖时间 150ms
@@ -266,20 +329,23 @@ export default {
   },
 
   mounted() {
-    this.setActivePermissionId(this.activePermissionId);
+    this.setActivePermissionId(this.defaultId);
     this.setTreeCheckedAndDisabled(this.activePermissionId);
 
     this.setTreeData();
+
+
   }
 };
 </script>
 <style lang="scss" scoped>
 $item-height: 35px;
+$item-height-second: 25px;
 
 //滚动条大小
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
 .role-tree {
@@ -296,15 +362,23 @@ $item-height: 35px;
     font-size: 13px;
   }
 
-  .el-tree {
+  ::v-deep .el-tree {
     background: transparent;
 
-    /deep/ .el-checkbox__inner {
+    * {
+      min-width: initial;
+    }
+
+    .el-checkbox__inner {
       border-radius: 0px;
     }
 
+    > .el-tree-node {
+      border-right: 1px solid white;
+    }
+
     .el-checkbox__inner.is-disabled {
-      /deep/ .el-checkbox__inner {
+      .el-checkbox__inner {
         background-color: #d7d7d7;
       }
     }
@@ -371,6 +445,50 @@ $item-height: 35px;
         height: $item-height;
         line-height: $item-height;
         border-bottom: 1px solid white;
+        background-color: #bcbcbc;
+
+        .left {
+          flex: 2;
+          border-right: 1px solid white;
+          text-align: center;
+          font-weight: bold;
+          font-size: 13px;
+        }
+        .right {
+          flex: 3;
+          text-align: center;
+          font-weight: bold;
+          font-size: 13px;
+        }
+      }
+
+      .tree-body {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+
+        .left-tree {
+          display: flex;
+          flex-direction: column;
+          flex: 2;
+          overflow: auto;
+          overflow: overlay;
+        }
+
+        .right-tree {
+          display: flex;
+          flex-direction: column;
+          flex: 3;
+        }
+      }
+
+      .tree-header-second {
+        display: flex;
+        box-sizing: border-box;
+        height: $item-height-second;
+        line-height: $item-height-second;
+        border-bottom: 1px solid white;
+        background-color: #dadada;
 
         .left {
           flex: 1;
@@ -387,28 +505,31 @@ $item-height: 35px;
         }
       }
 
-      .tree-body {
+      .tree-body-second {
         display: flex;
         flex: 1;
-        overflow: auto;
-        overflow: overlay;
+        overflow: hidden;
 
         .left-tree {
           display: flex;
           flex-direction: column;
           flex: 1;
-          border-right: 1px solid white;
-          margin-top: 10px;
+          overflow: auto;
+          overflow: overlay;
         }
 
         .right-tree {
           display: flex;
           flex-direction: column;
           flex: 1;
-          margin-top: 10px;
+          overflow: auto;
+          overflow: overlay;
         }
-        /deep/ .el-tree-node__label {
-          padding-left: 5px;
+      }
+
+      ::v-deep .el-tree-node__content {
+        .el-tree-node__label {
+          padding-left: 0;
         }
       }
     }

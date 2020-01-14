@@ -152,6 +152,72 @@ const actions = {
       fetch
         .post("/role/detail", data)
         .then(res => {
+          res = {
+            ret: 0,
+            data: {
+              id: "115",
+              role_name: "hello 1_2",
+              pid: "1",
+              created_at: "2020-01-09 10:43:04",
+              updated_at: "2020-01-09 10:43:04",
+              state: "1",
+              parentlevel: 1,
+              client_id: ["152", "151"],
+              auth_data: [
+                {
+                  tabId: "152",
+                  values: [
+                    {
+                      id: "25c29fc0-337a-11ea-af17-eda9509fd65b",
+                      state: 1,
+                      product: [
+                        "167_41_219",
+                        "1_11_185",
+                        "1_11_184",
+                        "1_11_183",
+                        "1_11_182",
+                        "1_11_181",
+                        "1_11_180",
+                        "1_11_179",
+                        "1_11_178",
+                        "1_11_176",
+                        "1_11_175",
+                        "1_11_174"
+                      ],
+                      auth: { custom: ["2", "3", "18", "16", "17"], fixed: [] },
+                      type: 1
+                    }
+                  ]
+                },
+                {
+                  tabId: "151",
+                  values: [
+                    {
+                      id: "25c29fc1-337a-11ea-af17-eda9509fd65b",
+                      state: 1,
+                      product: [
+                        "167_41_219",
+                        "1_11_185",
+                        "1_11_184",
+                        "1_11_183",
+                        "1_11_182",
+                        "1_11_181",
+                        "1_11_180",
+                        "1_11_179",
+                        "1_11_178",
+                        "1_11_176",
+                        "1_11_175",
+                        "1_11_174"
+                      ],
+                      auth: { custom: [], fixed: [] },
+                      type: 1
+                    }
+                  ]
+                }
+              ]
+            }
+          };
+
           if (res.ret == 0) {
             resolve(res.data);
           } else {
@@ -192,6 +258,284 @@ const actions = {
       fetch
         .post("/role/getallmenu", data)
         .then(res => {
+          res = {
+            ret: 0,
+            data: {
+              menu: {
+                fixed: [
+                  {
+                    id: 0,
+                    name: "All Sections",
+                    val: "",
+                    pid: -1,
+                    children: [
+                      {
+                        id: "11",
+                        name: "Setting",
+                        val: null,
+                        pid: "0",
+                        children: [
+                          {
+                            id: "12",
+                            name: "Roles",
+                            val: "role/list",
+                            pid: "11"
+                          },
+                          {
+                            id: "13",
+                            name: "Users",
+                            val: "user/list",
+                            pid: "11"
+                          },
+                          {
+                            id: "14",
+                            name: "Clients",
+                            val: "user/clientlist",
+                            pid: "11"
+                          },
+                          {
+                            id: "15",
+                            name: "Table Maintenance",
+                            val: "maintenance/list",
+                            pid: "11"
+                          },
+                          {
+                            id: "19",
+                            name: "Operation Log",
+                            val: null,
+                            pid: "11"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                custom: [
+                  {
+                    id: 0,
+                    name: "All Sections",
+                    val: "",
+                    pid: -1,
+                    children: [
+                      {
+                        id: "1",
+                        name: "HOME",
+                        val: null,
+                        pid: "0",
+                        children: [
+                          {
+                            id: "2",
+                            name: "Corp Overview",
+                            val: "home/corp",
+                            pid: "1"
+                          },
+                          {
+                            id: "3",
+                            name: "Brand Overview",
+                            val: "home/brand",
+                            pid: "1"
+                          }
+                        ]
+                      },
+                      {
+                        id: "7",
+                        name: "Report Center",
+                        val: null,
+                        pid: "0",
+                        children: [
+                          {
+                            id: "8",
+                            name: "Custom Report",
+                            val: "report/custom",
+                            pid: "7",
+                            children: [
+                              {
+                                id: "18",
+                                name: "SPD Report",
+                                val: null,
+                                pid: "8"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        id: "9",
+                        name: "Data Source",
+                        val: null,
+                        pid: "0",
+                        children: [
+                          {
+                            id: "10",
+                            name: "Data List",
+                            val: "data/list",
+                            pid: "9",
+                            children: [
+                              {
+                                id: "16",
+                                name: "ELC Performance",
+                                val: null,
+                                pid: "10"
+                              },
+                              {
+                                id: "17",
+                                name: "ELC&competitors Spending",
+                                val: null,
+                                pid: "10"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              product: [
+                {
+                  id: 0,
+                  name: "All Clients",
+                  val: "",
+                  pid: -1,
+                  children: [
+                    {
+                      id: "167",
+                      name: "test_1218_001",
+                      created_at: "2019-12-18 18:08:24",
+                      updated_at: "2019-12-18 18:08:24",
+                      children: [
+                        {
+                          id: "167_41",
+                          name: "test_1218_p_001",
+                          client_id: "167",
+                          created_at: "2019-12-18 18:09:07",
+                          updated_at: "2019-12-18 18:09:07",
+                          ids: "41",
+                          children: [
+                            {
+                              id: "167_41_219",
+                              product_id: "219",
+                              name: "test_1218_k_001",
+                              brand_id: "41",
+                              created_at: "2019-12-18 18:09:24",
+                              updated_at: "2019-12-18 18:09:24"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      id: "1",
+                      name: "ELC",
+                      created_at: "2019-09-18 15:32:27",
+                      updated_at: "2019-10-22 15:32:05",
+                      children: [
+                        {
+                          id: "1_11",
+                          name: "Tom Ford",
+                          client_id: "1",
+                          created_at: "2019-08-18 15:13:14",
+                          updated_at: "2019-12-23 17:19:08",
+                          ids: "11",
+                          children: [
+                            {
+                              id: "1_11_185",
+                              product_id: "185",
+                              name: "Soleil",
+                              brand_id: "11",
+                              created_at: "2019-08-18 15:13:14",
+                              updated_at: "2019-08-18 15:13:14"
+                            },
+                            {
+                              id: "1_11_184",
+                              product_id: "184",
+                              name: "Private Blend",
+                              brand_id: "11",
+                              created_at: "2019-08-18 15:13:14",
+                              updated_at: "2019-08-18 15:13:14"
+                            },
+                            {
+                              id: "1_11_183",
+                              product_id: "183",
+                              name: "Ombre Leather",
+                              brand_id: "11",
+                              created_at: "2019-08-18 15:13:14",
+                              updated_at: "2019-08-18 15:13:14"
+                            },
+                            {
+                              id: "1_11_182",
+                              product_id: "182",
+                              name: "Neroli",
+                              brand_id: "11",
+                              created_at: "2019-08-18 15:13:14",
+                              updated_at: "2019-08-18 15:13:14"
+                            },
+                            {
+                              id: "1_11_181",
+                              product_id: "181",
+                              name: "Metallique",
+                              brand_id: "11",
+                              created_at: "2019-08-18 15:13:14",
+                              updated_at: "2019-08-18 15:13:14"
+                            },
+                            {
+                              id: "1_11_180",
+                              product_id: "180",
+                              name: "Lost Cherry",
+                              brand_id: "11",
+                              created_at: "2019-08-18 15:13:14",
+                              updated_at: "2019-08-18 15:13:14"
+                            },
+                            {
+                              id: "1_11_179",
+                              product_id: "179",
+                              name: "lip",
+                              brand_id: "11",
+                              created_at: "2019-08-18 15:13:14",
+                              updated_at: "2019-08-18 15:13:14"
+                            },
+                            {
+                              id: "1_11_178",
+                              product_id: "178",
+                              name: "Fabulous",
+                              brand_id: "11",
+                              created_at: "2019-08-18 15:13:14",
+                              updated_at: "2019-08-18 15:13:14"
+                            },
+                            {
+                              id: "1_11_176",
+                              product_id: "176",
+                              name: "Cushion",
+                              brand_id: "11",
+                              created_at: "2019-08-18 15:13:14",
+                              updated_at: "2019-08-18 15:13:14"
+                            },
+                            {
+                              id: "1_11_175",
+                              product_id: "175",
+                              name: "Branding",
+                              brand_id: "11",
+                              created_at: "2019-08-18 15:13:14",
+                              updated_at: "2019-08-18 15:13:14"
+                            },
+                            {
+                              id: "1_11_174",
+                              product_id: "174",
+                              name: "Boys&Girls",
+                              brand_id: "11",
+                              created_at: "2019-08-18 15:13:14",
+                              updated_at: "2019-08-18 15:13:14"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          };
+
           if (res.ret == 0) {
             resolve(res.data);
           } else {
@@ -306,6 +650,26 @@ const actions = {
   },
 
   /**
+   *
+   */
+  fetch_user_role_list_self({ getters, commit, dispatch }, data) {
+    return new Promise((resolve, reject) => {
+      fetch
+        .get("/user/getuserrolesandself")
+        .then(res => {
+          if (res.ret == 0) {
+            resolve(res.data);
+          } else {
+            reject(new Error(res.msg));
+          }
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  },
+
+  /**
    * 添加 user
    */
   fetch_add_user({ getters, commit, dispatch }, data) {
@@ -386,107 +750,6 @@ const actions = {
   },
 
   /**
-   *  获取 client 列表
-   *  ! 除了client一级，还有第二级brand，和第三级product
-   */
-  fetch_clients_list({ getters, commit, dispatch }, data) {
-    return new Promise((resolve, reject) => {
-      fetch
-        .post("/user/clientlist", data)
-        .then(res => {
-          if (res.ret == 0) {
-            resolve(res.data);
-          } else {
-            reject(new Error(res.msg));
-          }
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
-  },
-
-  /**
-   *  添加 client
-   */
-  fetch_client_add({ getters, commit, dispatch }, data) {
-    return new Promise((resolve, reject) => {
-      fetch
-        .post("/user/addclient", data)
-        .then(res => {
-          if (res.ret == 0) {
-            resolve(res.data);
-          } else {
-            reject(new Error(res.msg));
-          }
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
-  },
-
-  /**
-   *  删除 client
-   */
-  fetch_client_delete({ getters, commit, dispatch }, data) {
-    return new Promise((resolve, reject) => {
-      fetch
-        .post("/user/delclient", data)
-        .then(res => {
-          if (res.ret == 0) {
-            resolve(res.data);
-          } else {
-            reject(new Error(res.msg));
-          }
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
-  },
-
-  /**
-   *  获取 client详情
-   */
-  fetch_client_detail({ getters, commit, dispatch }, data) {
-    return new Promise((resolve, reject) => {
-      fetch
-        .post("/user/clientdetail", data)
-        .then(res => {
-          if (res.ret == 0) {
-            resolve(res.data);
-          } else {
-            reject(new Error(res.msg));
-          }
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
-  },
-
-  /**
-   *  编辑 client
-   */
-  fetch_client_edit({ getters, commit, dispatch }, data) {
-    return new Promise((resolve, reject) => {
-      fetch
-        .post("/user/editclient", data)
-        .then(res => {
-          if (res.ret == 0) {
-            resolve(res.data);
-          } else {
-            reject(new Error(res.msg));
-          }
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
-  },
-
-  /**
    *  通过角色找出 用户
    */
   fetch_users_by_roles({ getters, commit, dispatch }, data) {
@@ -548,57 +811,6 @@ const actions = {
     });
   },
 
-  //
-  fetch_table_maintenance_list({ getters, commit, dispatch }) {
-    let result = {
-      verified: {
-        id: 6,
-        serial: "faljlfaj-faljfa-fajlfa",
-        name: "Verified Fields",
-        update_time: "09-08 15:38:07",
-        download_url: "https://1233",
-        isEdit: 1
-      },
-      mapping: [
-        {
-          id: 6,
-          serial: "faljlfaj-faljfa-fajlfa",
-          name: "Mapping Table",
-          update_time: "09-08 15:38:07",
-          upload_url: "/321321",
-          download_url: "https://1233",
-          isEdit: 1
-        },
-        {
-          id: 7,
-          serial: "faljlfaj-faljfa-fajlfa",
-          name: "Mapping Table",
-          update_time: "09-08 15:38:07",
-          upload_url: "/321321",
-          download_url: "https://1233",
-          isEdit: 1
-        }
-      ]
-    };
-
-    return result;
-
-    return new Promise((resolve, reject) => {
-      fetch
-        .get("/maintenance/list")
-        .then(res => {
-          if (res.ret == 0) {
-            resolve(res.data);
-          } else {
-            reject(new Error(res.msg));
-          }
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
-  },
-
   //编码表下载
   fetch_code_table_download({ getters, commit, dispatch }) {
     return new Promise((resolve, reject) => {
@@ -616,134 +828,6 @@ const actions = {
         });
     });
   },
-
-  // 添加 code table 列表
-  fetch_code_table_add({ getters, commit, dispatch }, data) {
-    let result = [
-      {
-        id: 1,
-        code_level_1: "Code Table",
-        code_level_2: "09-08 15:38:07"
-      },
-      {
-        id: 2,
-        code_level_1: "Code Table",
-        code_level_2: "09-08 15:38:07"
-      }
-    ];
-    return result;
-
-    return new Promise((resolve, reject) => {
-      fetch
-        .post("/codeTable/add", data)
-        .then(res => {
-          if (res.ret == 0) {
-            resolve(res.data);
-          } else {
-            reject(new Error(res.msg));
-          }
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
-  },
-  // 编辑 code table 列表
-  fetch_code_table_edit({ getters, commit, dispatch }, data) {
-    let result = [
-      {
-        id: 1,
-        code_level_1: "Code Table",
-        code_level_2: "09-08 15:38:07"
-      },
-      {
-        id: 2,
-        code_level_1: "Code Table",
-        code_level_2: "09-08 15:38:07"
-      }
-    ];
-    return result;
-
-    return new Promise((resolve, reject) => {
-      fetch
-        .post("/codeTable/edit", data)
-        .then(res => {
-          if (res.ret == 0) {
-            resolve(res.data);
-          } else {
-            reject(new Error(res.msg));
-          }
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
-  },
-
-  // 编辑 code table 列表
-  fetch_code_table_delete({ getters, commit, dispatch }, data) {
-    let result = [
-      {
-        id: 1,
-        code_level_1: "Code Table",
-        code_level_2: "09-08 15:38:07"
-      },
-      {
-        id: 2,
-        code_level_1: "Code Table",
-        code_level_2: "09-08 15:38:07"
-      }
-    ];
-    return result;
-
-    return new Promise((resolve, reject) => {
-      fetch
-        .post("/codeTable/delete", data)
-        .then(res => {
-          if (res.ret == 0) {
-            resolve(res.data);
-          } else {
-            reject(new Error(res.msg));
-          }
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
-  },
-  // 获取 code table 列表
-  fetch_code_table_list({ getters, commit, dispatch }) {
-    let result = [
-      {
-        id: 1,
-        code_level_1: "Code Table",
-        code_level_2: "09-08 15:38:07"
-      },
-      {
-        id: 2,
-        code_level_1: "Code Table",
-        code_level_2: "09-08 15:38:07"
-      }
-    ];
-    return result;
-
-    return new Promise((resolve, reject) => {
-      fetch
-        .get("/codeTable/list")
-        .then(res => {
-          if (res.ret == 0) {
-            resolve(res.data);
-          } else {
-            reject(new Error(res.msg));
-          }
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
-  },
-
- 
 
   /**
    *  获取operation Log的过滤项列表

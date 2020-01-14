@@ -15,8 +15,7 @@
                 popper-class="operate-popver"
                 trigger="click">
                 <div>
-                    <div v-if="!isTableMaintanceReadable && value.isEdit"
-                        class="popver-item"
+                    <div class="popver-item"
                         @click="handle_edit(value)">
                         <i class="iconfont mas-edit"></i> Edit
                     </div>
@@ -24,15 +23,15 @@
                         @click="handle_download(value)">
                         <i class="iconfont mas-download"></i> Download
                     </div>
-                    <div v-if="!isTableMaintanceReadable"
-                        class="popver-item"
+                    <div class="popver-item"
                         @click="handle_upload(value)">
                         <span><i class="iconfont mas-upload"></i> Upload</span>
                         <el-upload ref="upload"
                             :action="value.upload_url"
+                            :data="{id: value.id}"
                             :show-file-list="false"
                             :before-upload="handleBeforeUpload"
-                            :on-success="handleSuccess"
+                            :on-success="handleSuccess(value)"
                             :on-error="handleError"
                             :http-request="$uploadHttpRequest">
                         </el-upload>
@@ -65,9 +64,7 @@ export default {
       popver: false
     };
   },
-  computed: {
-    ...mapGetters("settings", ["isTableMaintanceReadable"])
-  },
+  computed: {},
 
   methods: {
     ...mapActions("settings", ["fetch_code_table_download"]),
@@ -85,8 +82,11 @@ export default {
       });
     },
 
-    handleSuccess() {
-      this.$message.success("Uploaded successfully.");
+    handleSuccess(value) {
+      return function(response) {
+        //  todo  更改 value的值
+        this.$message.success("Uploaded successfully.");
+      };
     },
 
     handleError(err, file, fileList) {
@@ -95,15 +95,7 @@ export default {
 
     handle_download(item) {
       this.popver = false;
-      //   this.fetch_code_table_download()
-      //     .then(data => {
-      //       this.$downloadFile(data.url);
-      //     })
-      //     .catch(err => {
-      //       this.$message.error(err.message);
-      //     });
-      // }
-      // this.$downloadFile(item.download_url);
+      this.$downloadFile({ url: item.download_url });
     },
 
     /**通过这个触发的目的是为了在点击 upload的同时，直接将popper隐藏掉。而在el-upload中 的trigger中触发 upload时，不能绑定其他事件，让popper消失 */

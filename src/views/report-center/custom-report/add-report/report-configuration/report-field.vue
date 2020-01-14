@@ -464,7 +464,7 @@ export default {
 
 <style lang="scss">
 .report-field__add-dialog {
-  /deep/ .el-dialog__body {
+  ::v-deep .el-dialog__body {
     .el-transfer {
       .el-transfer-panel {
         width: 330px;

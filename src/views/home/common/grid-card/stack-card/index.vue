@@ -3,14 +3,13 @@
         @click.stop="handle_click">
         <div class="title">Chart</div>
         <div class="cards-grid">
-            <histogram-bar v-if="chartData && chartData.rows && chartData.rows.length>0"
+            <histogramHeapBar v-if="chartData && chartData.rows && chartData.rows.length>0"
                 ref="histogramBarRef"
                 :values="chartData"
-                :is-heap="true"
                 :title="toolData.chartValue.name"
                 @back="handle_back_chart"
                 @forward="handle_forward_chart">
-            </histogram-bar>
+            </histogramHeapBar>
         </div>
 
         <div v-if="status!='view'"
@@ -25,11 +24,11 @@
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import fetch from "@/services/fetch";
 import uuidv4 from "uuid/v4";
-import histogramBar from "../histogram-bar";
+import histogramHeapBar from "../histogram-heap-bar";
 
 export default {
   name: "StackCard",
-  components: { histogramBar },
+  components: { histogramHeapBar },
 
   props: {
     value: {

@@ -2,9 +2,9 @@
     <div class="roles">
         <bread-crumb :values="breadCrumbList"></bread-crumb>
 
-        <div class="main"
-            v-loading="isLoading"
-            element-loading-spinner="iconfont mas-loading">
+        <div v-loading="isLoading"
+            element-loading-spinner="iconfont mas-loading"
+            class="main">
             <div class="tools">
                 <span class="add">
                     <el-button :disabled="isRolesReadable"

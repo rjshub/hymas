@@ -19,7 +19,7 @@
                     header-row-class-name="blue">
                     <el-table-column label="Brand"
                         align="center">
-                        <el-table-column label="Total"
+                        <el-table-column :label="label"
                             align="center"
                             width="180">
                             <el-table-column prop="name"
@@ -220,7 +220,7 @@
                     header-row-class-name="blue">
                     <el-table-column label="Brand"
                         align="center">
-                        <el-table-column label="Total"
+                        <el-table-column :label="label"
                             align="center"
                             width="180">
                             <el-table-column prop="brand_name"
@@ -438,6 +438,10 @@ export default {
     colsList: {
       type: [Object, Array],
       required: true
+    },
+    label: {
+      type: String,
+      required: true
     }
   },
   data() {
@@ -482,7 +486,7 @@ export default {
 <style lang="scss" scoped>
 .competitor-zoom-in {
   overflow: visible;
-  /deep/ .el-dialog {
+  ::v-deep .el-dialog {
     display: flex;
     flex-direction: column;
     margin-top: 2vh !important;

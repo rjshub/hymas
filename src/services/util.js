@@ -115,7 +115,7 @@ const REGXMAP = {
       message: "The first character of name must be alphabetic."
     }, //首位允许的字符
     character: {
-      regx: /^[\w-_]*$/,
+      regx: /^[\w-_\s]*$/,
       message:
         "Only alphabetics, numbers, underscore, hyphen, blank are allowed."
     }, //只能允许的字符

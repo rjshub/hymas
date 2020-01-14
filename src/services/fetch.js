@@ -32,6 +32,7 @@ instance.interceptors.response.use(res => {
       if (Object.prototype.toString.call(result) === "[object Object]") {
         if (result.hasOwnProperty("ret")) {
           if (result.ret == -1) {
+            //-1为登录过期
             if (!expireTimer) {
               expireTimer = setTimeout(() => {
                 MessageBox.alert("Login information has expired.", "Tips", {
@@ -47,6 +48,11 @@ instance.interceptors.response.use(res => {
                 });
               }, 0);
             }
+          } else if (result.ret == 1) {
+            //1 为接口出错
+            reject(
+              new Error(result.msg)
+            );
           } else {
             resolved(result);
           }

@@ -581,12 +581,12 @@ export default {
     contain: strict;
 
     //滚动条大小
-    /deep/ ::-webkit-scrollbar {
+    ::v-deep ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
 
-    /deep/ .el-table {
+    ::v-deep .el-table {
       td,
       th {
         padding: 0;

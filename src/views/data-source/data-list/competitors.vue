@@ -491,11 +491,11 @@ export default {
     flex: 1;
     contain: strict;
 
-    /deep/ .table-header-class {
+    ::v-deep .table-header-class {
       background-color: #f6f6f6 !important;
     }
 
-    /deep/ .el-table {
+    ::v-deep .el-table {
       td,
       th {
         padding: 0;

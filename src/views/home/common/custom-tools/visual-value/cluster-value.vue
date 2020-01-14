@@ -274,7 +274,7 @@ export default {
       color: #484848;
     }
 
-    /deep/ .el-form {
+    ::v-deep .el-form {
       .el-form-item__content {
         line-height: 1;
       }

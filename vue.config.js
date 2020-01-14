@@ -40,7 +40,7 @@ module.exports = {
         pathRewrite: {
           // '^/api': ''
         }
-      }
+      },
     },
     overlay: {
       warnings: true,

@@ -12,9 +12,6 @@
                     placeholder="Select Client"
                     style="width:150px;margin-right:10px"
                     @change="handle_change_client">
-                    <el-option label="All Clients"
-                        value="">
-                    </el-option>
                     <el-option v-for="(item,index) in clientOptions"
                         :key="index"
                         :label="item.name"
@@ -38,7 +35,8 @@
                     <VerifiedCard :value="cards.verified"></VerifiedCard>
                 </div>
                 <div class="cards-mapping">
-                    <MappingCard :values="cards.mapping"></MappingCard>
+                    <MappingCard :values="cards.mapping"
+                        @refresh="fetch_maintenance_list"></MappingCard>
                 </div>
 
                 <!--
@@ -83,7 +81,6 @@ export default {
   },
 
   methods: {
-    ...mapActions("settings", ["fetch_table_maintenance_list"]),
     ...mapActions("common", ["fetch_client_by_role"]),
     async init() {
       this.isLoading = true;
@@ -102,10 +99,47 @@ export default {
     },
 
     async fetch_maintenance_list() {
-      let result = await this.fetch_table_maintenance_list({ keywords: this.filter.keywords });
-      this.cards.verified = result.verified || {};
-      this.cards.mapping = result.mapping || [];
+      let data = {
+        verified: {
+          id: 6,
+          serial: "faljlfaj-faljfa-fajlfa",
+          name: "Verified Fields",
+          update_time: "09-08 15:38:07",
+          download_url: "https://1233",
+          isEdit: 1
+        },
+        mapping: [
+          {
+            id: 6,
+            serial: "faljlfaj-faljfa-fajlfa",
+            name: "Mapping Table",
+            update_time: "09-08 15:38:07",
+            upload_url: "/321321",
+            download_url: "https://1233",
+            isEdit: 1
+          },
+          {
+            id: 7,
+            serial: "faljlfaj-faljfa-fajlfa",
+            name: "Mapping Table",
+            update_time: "09-08 15:38:07",
+            upload_url: "/321321",
+            download_url: "https://1233",
+            isEdit: 1
+          }
+        ]
+      };
+
+      try {
+        // let { data } = await fetch.post("/maintenance/list", { client_id: this.filter.client, keywords: this.filter.keywords });
+        this.cards.verified = data.verified || {};
+        this.cards.mapping = data.mapping || [];
+      } catch (err) {
+        this.$message.error(err.message);
+      }
     },
+    //
+
     handle_change_client() {}
   },
 

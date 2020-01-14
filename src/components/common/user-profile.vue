@@ -245,7 +245,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("settings", ["fetch_user_role_list", "fetch_add_user", "fetch_edit_user", "fetch_user_detail"]),
+    ...mapActions("settings", ["fetch_user_role_list_self", "fetch_add_user", "fetch_edit_user", "fetch_user_detail"]),
     ...mapMutations("user", ["UPDATE_USER_INFO"]),
 
     setFormData(data) {
@@ -261,7 +261,7 @@ export default {
     async init() {
       // this.$refs.form.clearValidate();
 
-      let arr = [this.fetch_user_role_list({ id: this.userId }), this.fetch_user_detail({ id: this.userId })];
+      let arr = [this.fetch_user_role_list_self({ id: this.userId }), this.fetch_user_detail({ id: this.userId })];
 
       try {
         this.isLoading = true;

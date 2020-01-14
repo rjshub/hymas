@@ -133,7 +133,7 @@ export default {
       flex-direction: column;
       flex: 1;
 
-      /deep/ .el-tabs__header {
+      ::v-deep .el-tabs__header {
         background-color: #e5e6eb;
         margin: 0;
 
@@ -151,7 +151,7 @@ export default {
         }
       }
 
-      /deep/ .el-tabs__content {
+      ::v-deep .el-tabs__content {
         flex: 1;
         background-color: white;
 

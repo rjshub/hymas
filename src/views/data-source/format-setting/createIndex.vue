@@ -1,133 +1,166 @@
 <template>
-    <div class="format-create">
-        <el-form ref="format_form"
-            :model="form"
-            label-width="80px"
-            label-position="top"
-            :rules="rules"
-            :inline="true"
-            size="mini">
-            <el-form-item class="formItem" prop="name">
-                <label>Format Name:</label>
-                <el-input v-model="form.name"></el-input>
-            </el-form-item>
-            <el-form-item class="formItem" style="width:310px" prop="client">
-                <label>Select Range:</label>
-                <el-select v-model="form_client_label"
-                    filterable
-                    multiple
-                    @remove-tag="handle_remove_tag"
-                    placeholder="Select Client">
-                    <el-option value=""
-                        :disabled="true">
-                        <el-checkbox :indeterminate="isIndeterminate"
-                            v-model="checkAll"
-                            @change="handleCheckAllChange">All Clients</el-checkbox>
-                    </el-option>
-                    <!-- 下拉复选，区分全部和个别 -->
-                    <el-checkbox-group v-model="form.client"
-                        @change="handleCheckedClientChange">
-                        <el-option v-for="(item,index) in clientOptions"
-                            :key="index"
-                            :disabled="true"
-                            :label="item.label"
-                            :value="item.value">
-                            <el-checkbox :label="item.value">{{item.label}}</el-checkbox>
-                        </el-option>
-                    </el-checkbox-group>
-                </el-select>
-                <span style="margin: 0 10px;">except</span>
-            </el-form-item>
-            <el-form-item class="formItem" style="width:310px">
-              <label style="visibility:hidden">except</label>
-              <el-select v-model="form.except_client"
-                  filterable
-                  :disabled="!checkAll"
-                  @change="handle_change_except_client"
-                  placeholder="Select Except Client">
-                  <el-option v-for="(item,index) in clientOptions"
-                      :key="index"
-                      :label="item.label"
-                      :value="item.value">
-                      <el-radio v-model="form.except_client"
-                          :label="item.value">{{item.label}}</el-radio>
-                  </el-option>
-              </el-select>
-            </el-form-item>
+  <div class="format-create" v-loading.fullscreen="isloading">
+    <el-form
+      ref="format_form"
+      :model="form"
+      label-width="80px"
+      label-position="top"
+      :rules="rules"
+      :inline="true"
+      size="mini"
+    >
+      <el-form-item class="formItem" prop="name">
+        <label>Format Name:</label>
+        <el-input v-model="form.name" style="width: 240px" placeholder="format name"></el-input>
+      </el-form-item>
+      <el-form-item class="formItem" style="width:310px" prop="client">
+        <label>Select Range:</label>
+        <el-select
+          v-model="form_client_label"
+          filterable
+          multiple
+          @remove-tag="handle_remove_tag"
+          placeholder="select client"
+           style="width: 240px"
+        >
+          <el-option value :disabled="true">
+            <el-checkbox
+              :indeterminate="isIndeterminate"
+              v-model="checkAll"
+              @change="handleCheckAllChange"
+            >All Clients</el-checkbox>
+          </el-option>
+          <!-- 下拉复选，区分全部和个别 -->
+          <el-checkbox-group v-model="form.client" @change="handleCheckedClientChange">
+            <el-option
+              v-for="(item,index) in clientOptions"
+              :key="index"
+              :disabled="true"
+              :label="item.label"
+              :value="item.value"
+            >
+              <el-checkbox :label="item.value">{{item.label}}</el-checkbox>
+            </el-option>
+          </el-checkbox-group>
+        </el-select>
+        <span style="margin: 0 10px;">except</span>
+      </el-form-item>
+      <el-form-item class="formItem" style="width:310px">
+        <label style="visibility:hidden">except</label>
+        <el-select
+          v-model="form.except_client"
+          filterable
+          :disabled="!checkAll"
+          @change="handle_change_except_client"
+          placeholder="select except client"
+           style="width: 240px"
+        >
+          <el-option
+            v-for="(item,index) in clientOptions"
+            :key="index"
+            :label="item.label"
+            :value="item.value"
+          >
+            <el-radio v-model="form.except_client" :label="item.value">{{item.label}}</el-radio>
+          </el-option>
+        </el-select>
+      </el-form-item>
 
-            <el-form-item class="create-format formItem">
-                <label>Create Format:</label>
-                <div class="tools">
-                    <el-button type="primary"
-                        icon="iconfont mas-add"
-                        plain
-                        @click="handle_add_normal_field"></el-button>
-                    <el-button type="primary"
-                        icon="iconfont mas-function"
-                        plain
-                        @click="handle_add_formula_field"></el-button>
-                    <el-button type="primary"
-                        icon="iconfont mas-calander"
-                        plain
-                        @click="handle_add_extract_field"></el-button>
-                    <el-button type="primary"
-                        icon="iconfont mas-relate"
-                        plain
-                        @click="handle_add_connect_field"></el-button>
-                </div>
-                <div class="field-warp">
-                    <draggable style="height:100%"
-                        class="grag-warp"
-                        v-model="form.fields"
-                        v-bind="dragOptions"
-                        @change="drag_change"
-                        @start="isDrag = true"
-                        @end="isDrag = false">
-                        <FormatField v-for="item in form_fields_list"
-                            :key="item.id"
-                            :data="item"
-                            @update_field="drag_update_field"
-                            @change-label="drag_change_field_label"
-                            @change-type="drag_change_field_type"
-                            @change-required="drag_change_field_required"
-                            @change-reportForm="drag_change_field_reportForm"
-                            @first="drag_move_first"
-                            @prev="drag_move_prev"
-                            @next="drag_move_next"
-                            @last="drag_move_last"
-                            @delete="drag_delete_field">
-                        </FormatField>
-                    </draggable>
-                </div>
-            </el-form-item>
+      <el-form-item class="create-format formItem">
+        <label>Create Format:</label>
+        <div class="tools">
+          <el-button type="primary" icon="iconfont mas-add" plain @click="handle_add_normal_field"></el-button>
+          <el-button
+            type="primary"
+            icon="iconfont mas-function"
+            plain
+            @click="handle_add_formula_field"
+          ></el-button>
+          <el-button
+            type="primary"
+            icon="iconfont mas-calander"
+            plain
+            @click="handle_add_extract_field"
+          ></el-button>
+          <el-button
+            type="primary"
+            icon="iconfont mas-relate"
+            plain
+            @click="handle_add_connect_field"
+          ></el-button>
 
-            <el-form-item class="linkage-relation formItem">
-                <label>Linkage Relation:</label>
-                <main v-if="form.relations.length > 0">
-                  <div v-for="(item, index) in form.relations" :key="index" class="relation-container">
-                    <RelationContent :data="item" @update_relation="update_relation"></RelationContent>
-                    <span class="iconfont mas-add" 
-                      v-show="index === form.relations.length - 1" @click="handle_add_relation"></span>
-                  </div>
-                </main>
-            </el-form-item>
+          <el-upload
+            class="upload-demo"
+            style="float: right"
+            :show-file-list="false"
+            action="api/source/competitors_spending_upload"
+            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" 
+            @on-success="handle_upload_success" 
+            @before-upload="handle_before_upload">
+            <el-button
+              type="primary"
+              title="upload format"
+              icon="iconfont mas-upload"
+              plain
+            ></el-button>
+          </el-upload>
+        </div>
+        <div class="field-warp">
+          <draggable
+            style="height:100%"
+            class="grag-warp"
+            v-model="form.fields"
+            v-bind="dragOptions"
+            @change="drag_change"
+            @start="isDrag = true"
+            @end="isDrag = false"
+          >
+            <FormatField
+              v-for="item in form_fields_list"
+              :key="item.id"
+              :data="item"
+              @update_field="drag_update_field"
+              @change-label="drag_change_field_label"
+              @change-type="drag_change_field_type"
+              @change-required="drag_change_field_required"
+              @change-reportForm="drag_change_field_reportForm"
+              @first="drag_move_first"
+              @prev="drag_move_prev"
+              @next="drag_move_next"
+              @last="drag_move_last"
+              @delete="drag_delete_field"
+            ></FormatField>
+          </draggable>
+        </div>
+      </el-form-item>
 
-            <el-form-item style="width: 100%">
-              <el-checkbox v-model="form.auto_number">The system auto matically numbers the table line.</el-checkbox>
-            </el-form-item>
+      <el-form-item class="linkage-relation formItem">
+        <label>Hierarchical Structure:</label>
+        <main v-if="form.relations.length > 0">
+          <div v-for="(item, index) in form.relations" :key="index" class="relation-container">
+            <RelationContent :data="item" @update_relation="update_relation"></RelationContent>
+            <span
+              class="iconfont mas-add"
+              v-show="index === form.relations.length - 1"
+              @click="handle_add_relation"
+            ></span>
+          </div>
+        </main>
+      </el-form-item>
 
-            <el-form-item class="formItem">
-              <el-button type="primary" @click="onSubmit_form('format_form')">Save</el-button>
-              <el-button @click="handle_cancel">Cancel</el-button>
-            </el-form-item>
-        </el-form>
-        <FormulaDialog ref="formula_dialog"
-            @add_formula_field="add_formula_field"></FormulaDialog>
-        <ExtractDialog ref="extract_dialog"
-            @add_extract_field="add_extract_field"></ExtractDialog>
-        <ConnectDialog ref="connect_dialog"
-            @add_connect_field="add_connect_field"></ConnectDialog>
-    </div>
+      <el-form-item style="width: 100%">
+        <el-checkbox v-model="form.auto_number">The system auto matically numbers the table line.</el-checkbox>
+      </el-form-item>
+
+      <el-form-item class="formItem">
+        <el-button type="primary" @click="onSubmit_form('format_form')">Submit</el-button>
+        <el-button @click="handle_cancel">Cancel</el-button>
+      </el-form-item>
+    </el-form>
+    <FormulaDialog ref="formula_dialog" @add_formula_field="add_formula_field"></FormulaDialog>
+    <ExtractDialog ref="extract_dialog" @add_extract_field="add_extract_field"></ExtractDialog>
+    <ConnectDialog ref="connect_dialog" @add_connect_field="add_connect_field"></ConnectDialog>
+  </div>
 </template>
 
 <script type="text/javascript">
@@ -138,13 +171,21 @@ import FormatField from "./components/format-field";
 import FormulaDialog from "./components/formula-dialog";
 import ExtractDialog from "./components/extract-dialog";
 import ConnectDialog from "./components/connect-dialog";
-import RelationContent from './components/relation-content'
+import RelationContent from "./components/relation-content";
 
 export default {
   name: "containerName",
-  components: { draggable, FormatField, FormulaDialog, ExtractDialog, ConnectDialog, RelationContent },
+  components: {
+    draggable,
+    FormatField,
+    FormulaDialog,
+    ExtractDialog,
+    ConnectDialog,
+    RelationContent
+  },
   data() {
     return {
+      isloading: false,
       form: {
         name: "",
         client: [],
@@ -176,24 +217,21 @@ export default {
             type: "normal",
             required: false,
             to_report_form: true
-          },
+          }
         ],
         relations: [
           {
-            value: '',
+            value: "",
+            label: '',
             result: [],
-            createTime: 1577778114672
+            createTime: new Date().getTime()
           }
         ],
         auto_number: true
       },
       rules: {
-        name: [
-                { required: true, message: "", trigger: 'blur' }
-          ],
-        client: [
-                { required: true, message: "", trigger: 'blur' }
-          ],
+        name: [{ required: true, message: "", trigger: "blur" }],
+        client: [{ required: true, message: "", trigger: "blur" }]
       },
       form_client_label: [],
       form_except_client_label: [],
@@ -211,7 +249,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("dataSource/formatSetting", ["field_type_list", "form_fields_list"])
+    ...mapState("dataSource/formatSetting", [
+      "field_type_list",
+      "form_fields_list"
+    ])
   },
   methods: {
     ...mapActions("home", ["fetch_filter_list"]),
@@ -240,7 +281,8 @@ export default {
     handleCheckedClientChange(value) {
       let checkedCount = value.length;
       this.checkAll = checkedCount === this.clientOptions.length;
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.clientOptions.length;
+      this.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.clientOptions.length;
 
       if (checkedCount) {
         this.form_client_label = [];
@@ -270,7 +312,7 @@ export default {
     handle_add_normal_field() {
       const param = {
         createTime: new Date().getTime(),
-        label: "Name",
+        label: "field label",
         location: "",
         field_type: "Text",
         type: "normal",
@@ -292,6 +334,15 @@ export default {
       //   console.log('新建映射关系field')
       this.$refs.connect_dialog.dialog_show();
     },
+    handle_upload_success(res, fiels) {
+      this.isloading = false
+      console.log(field, 11)
+    },
+    handle_before_upload() {
+      this.isloading = true
+      console.log(field,22)
+    },
+
     add_formula_field(param) {
       this.form.fields.push(param);
       this.drag_change();
@@ -426,65 +477,108 @@ export default {
     // relation
     handle_add_relation() {
       const param = {
-        value: '',
+        value: "",
+        label: "",
         result: [],
         createTime: new Date().getTime()
-      }
-      this.form.relations.push(param)
+      };
+      this.form.relations.push(param);
     },
     update_relation(param) {
       const index = this.form.relations.findIndex(obj => {
-        return obj.createTime === param.createTime
-      })
+        return obj.createTime === param.createTime;
+      });
 
       if (index >= 0) {
-        this.form.relations[index] = param
+        this.form.relations[index] = param;
       }
     },
+    validate(text) {
+      const reg = /^[A-Z]+[A-Z\>]+[A-Z]+$/;
+      return reg.test(text);
+    },
     // 表单提交、取消
+
     onSubmit_form(formName) {
-      let result = []
-      this.form.relations.forEach(item => {    // 判断关联是否为空
-        if (item.value && item.value.length > 0) {
-          result.push(item)
+      let result = [];
+      this.form.relations.forEach(item => {
+        // 判断关联是否为空且正确
+        if (item.value && item.value.length > 0 && this.validate(item.value)) {
+          result.push(item);
         }
-      })
-      this.$refs[formName].validate((valid) => {
+      });
+
+      this.$refs[formName].validate(valid => {
         if (valid) {
-          this.form.relations = result
+          this.isloading = true;
+          setTimeout(() => {
+            this.isloading = false;
+          }, 1000);
+          this.form.relations = result;
           // this.$router.push({path: 'list'})
         }
-      })
+      });
+
+      if (this.form.relations.length === 0) {
+        this.form.relations.push({
+          value: "",
+          result: [],
+          createTime: new Date().getTime()
+        });
+      }
     },
     handle_cancel() {
-      this.$confirm("Are you Sure to abandon the data source template configuration?", "Tips", {
+      this.$confirm(
+        "Are you Sure to abandon the data source template configuration?",
+        "Tips",
+        {
           confirmButtonText: "Yes",
           cancelButtonText: "No",
           closeOnClickModal: false,
           type: "warning",
           callback: action => {
             if (action == "confirm") {
-                this.$router.push({path: 'list'})
+              this.$router.push({ path: "list" });
             }
           }
-      })
+        }
+      );
     }
   },
+  // beforeRouteLeave(to, from, next) {
+  //   this.$confirm(
+  //     "Are you Sure to abandon the data source template configuration?",
+  //     "Tips",
+  //     {
+  //       confirmButtonText: "Yes",
+  //       cancelButtonText: "No",
+  //       closeOnClickModal: false,
+  //       type: "warning",
+  //       callback: action => {
+  //         if (action == "confirm") {
+  //           next()
+  //         } else {
+  //           next(false)
+  //         }
+  //       }
+  //     }
+  //   );
+  // },
   mounted() {
     // 更新format新建状态
-    this.update_format_create(true) 
+    this.update_format_create(true);
     this.fetch_filter_list({ type: "client", value: "" })
       .then(res => {
         this.clientOptions = res;
       })
       .catch(err => {});
-    //  新建为空，编辑为借口请求后的数据
+    //  新建为空，编辑为接口请求后的数据
     this.update_form_fields_list(_.cloneDeep(this.form.fields));
   }
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .format-create {
   padding: 20px;
   background: #fff;
@@ -500,9 +594,6 @@ export default {
       font-weight: bold;
       color: #333333;
       margin-top: 5px;
-    }
-    input {
-      width: 240px;
     }
   }
   .create-format {
@@ -535,14 +626,17 @@ export default {
       min-height: 100px;
       background: rgba(242, 242, 242, 1);
       padding: 20px;
+      display: flex;
+      flex-flow: column;
       .relation-container {
+        float: left;
         margin-bottom: 10px;
         span {
           display: inline-block;
           height: 100%;
           line-height: 28px;
           margin-left: 10px;
-          color: #0C569D;
+          color: #0c569d;
         }
         input {
           width: 100%;
@@ -551,12 +645,12 @@ export default {
     }
   }
 }
-.el-select-dropdown {
+/deep/.el-select-dropdown {
   .el-checkbox {
     width: 100% !important;
   }
 }
-.el-radio {
+/deep/.el-radio {
   .el-radio__inner {
     border-radius: 2px;
   }

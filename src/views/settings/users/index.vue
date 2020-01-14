@@ -19,7 +19,7 @@
                         size="mini"
                         filterable
                         placeholder="Select Role"
-                        style="width:150px;margin-right:10px"
+                        style="width:150px;margin-right:5px"
                         @change="get_user_list">
                         <el-option label="All Roles"
                             value="">

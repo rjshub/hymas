@@ -93,23 +93,25 @@ export default {
     getSeries(values) {
       let LegendData = this.getLegendData(values).map(item => item.name);
       let rows = values.rows;
+      let self = this;
+
       let series = LegendData.map(item => {
-        let data = rows.map(row => row[item]);
-        //非堆叠时
+        let data = rows.map(row => {
+          return row[item];
+        });
+
         return {
           name: item,
           type: "bar",
+          stack: "广告",
           data,
-          // barCategoryGap: "200%",
-          barGap: "20%",
+          barCategoryGap: "50%",
+          barWidth: 70,
           label: {
             show: true,
-            rotate: "90",
-            formatter: function() {},
-            position: ["20%", "-1"]
+            position: "inside" 
           },
-          barWidth: 20,
-          barMinHeight:1
+          barMinHeight: 20
         };
       });
       return series;
@@ -144,9 +146,8 @@ export default {
 
       let chartWidth = jquery(this.$refs.chart).width();
       let length = this.values.rows.length;
-      let perLength = Object.keys(this.values.rows[0]).length - 1;
-      let k = 0.5;
-      let datazoom = chartWidth / (length * perLength) / k;
+      let k = 2;
+      let datazoom = chartWidth / length / k;
       if (datazoom > 100) {
         datazoom = 100;
       }
@@ -164,7 +165,7 @@ export default {
           top: 5,
           left: "center"
         },
- 
+       
         tooltip: {
           trigger: "item", //可以单独浮动到对应的条目上，而不是展示x轴上所有的y选项
           axisPointer: {
@@ -207,9 +208,7 @@ export default {
           {
             type: "category",
             data: this.getxAxisData(this.values),
-            boundaryGap: true,
             axisLabel: {
-              // rotate:50,  //文字旋转60度
               interval: 0 //0则全部显示，不会有任何的隐藏
             }
           }
@@ -237,6 +236,8 @@ export default {
             xAxisIndex: 0,
             filterMode: "filter",
             rangeMode: ["value", "value"],
+            // start: 0,
+            // end: 60,
             maxSpan: datazoom,
 
             showDetail: false //是否显示两头的 详情名称
@@ -248,6 +249,8 @@ export default {
             xAxisIndex: 0,
             filterMode: "filter",
             rangeMode: ["value", "value"],
+            // start: 0,
+            // end: 60,
             maxSpan: datazoom,
             showDetail: false //是否显示两头的 详情名称
             // handleSize: 30,//滑动条的 左右2个滑动条的大小
@@ -258,10 +261,8 @@ export default {
         series: this.getSeries(this.values)
         // animationEasing: "elasticOut" //延迟动画
       };
-
       this.$chart.setOption(option, true); //设置true，重新绘制
 
-      //末尾有个不显示，以滚动就显示，解决这个奇怪的问题
       this.$chart.dispatchAction({
         type: "dataZoom",
         start: 0,

@@ -4,7 +4,8 @@
             :key="index"
             :value="item"></CardItem>
 
-        <div class="add-card">
+        <div class="add-card"
+            @click="handle_add_mapping_table">
             <div class="add-icon">
                 <i class="el-icon-plus"></i>
             </div>
@@ -12,6 +13,10 @@
                 Add Mapping table
             </div>
         </div>
+
+        <AddMapping v-if="isShowAddMappping"
+            @close="isShowAddMappping=false"
+            @save="handle_save_mapping"></AddMapping>
     </div>
 </template>
 
@@ -19,10 +24,11 @@
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import fetch from "@/services/fetch";
 import CardItem from "./card-item";
+import AddMapping from "./add-mapping";
 
 export default {
   name: "MappingCard",
-  components: { CardItem },
+  components: { CardItem, AddMapping },
 
   props: {
     values: {
@@ -32,7 +38,19 @@ export default {
   },
 
   data() {
-    return {};
+    return {
+      isShowAddMappping: false
+    };
+  },
+
+  methods: {
+    handle_add_mapping_table() {
+      this.isShowAddMappping = true;
+    },
+    handle_save_mapping() {
+      this.isShowAddMappping = false;
+      this.$emit("refresh");
+    }
   },
 
   mounted() {}

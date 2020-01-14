@@ -793,23 +793,6 @@ export default {
               this.filter.quarter = "";
             }
           }
-
-          let monthMap = {
-            1: "Jan",
-            2: "Feb",
-            3: "Mar",
-            4: "Apr",
-            5: "May",
-            6: "Jun",
-            7: "Jul",
-            8: "Aug",
-            9: "Sep",
-            10: "Oct",
-            11: "Nov",
-            12: "Dec"
-          };
-
-          this.totalTitle = monthMap[this.filter.month];
         } else {
           this.$message.error(res.msg);
         }
@@ -895,7 +878,7 @@ export default {
     overflow: auto;
     contain: strict;
 
-    /deep/ .el-table {
+    ::v-deep .el-table {
       margin-bottom: 50px;
 
       td,

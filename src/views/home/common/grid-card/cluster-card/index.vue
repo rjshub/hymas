@@ -6,7 +6,6 @@
             <histogram-bar v-if="chartData && chartData.rows && chartData.rows.length>0"
                 ref="histogramBarRef"
                 :values="chartData"
-                :is-heap="false"
                 :title="toolData.chartValue.name"
                 @back="handle_back_chart"
                 @forward="handle_forward_chart">
@@ -43,6 +42,7 @@ export default {
 
   data() {
     return {
+      filterSelects:{},
       extra: {},
       chartData: {}
     };

@@ -514,12 +514,6 @@ $chart-height: 400px;
     background: white;
     border: 1px solid #e4e4e4;
     border-radius: 5px;
-
-    // &.no-draging {
-    //   &:hover {
-    //     cursor: auto !important;
-    //   }
-    // }
   }
 }
 </style>

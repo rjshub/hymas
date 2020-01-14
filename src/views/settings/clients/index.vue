@@ -2,9 +2,9 @@
     <div class="clients">
         <bread-crumb :values="breadCrumbList"></bread-crumb>
 
-        <div class="main"
-            v-loading="isLoading"
-            element-loading-spinner="iconfont mas-loading">
+        <div v-loading="isLoading"
+            element-loading-spinner="iconfont mas-loading"
+            class="main">
             <div class="tools">
                 <span class="add">
                     <el-button :disabled="isClientsReadable"
@@ -15,11 +15,27 @@
                     </el-button>
                 </span>
                 <span class="search">
+                    <el-select v-model="industry"
+                        size="mini"
+                        filterable
+                        placeholder="Select Industry"
+                        style="width:150px;margin-right:5px"
+                        @change="handle_change_industry">
+                        <el-option label="All Industries"
+                            value="">
+                        </el-option>
+                        <el-option v-for="(item,index) in industryList"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
+
                     <el-select v-model="client"
                         size="mini"
                         filterable
                         placeholder="Select Client"
-                        style="width:150px;margin-right:10px"
+                        style="width:150px;margin-right:5px"
                         @change="handle_change_client">
                         <el-option label="All Clients"
                             value="">
@@ -35,7 +51,7 @@
                         size="mini"
                         filterable
                         placeholder="Select Brand"
-                        style="width:150px;margin-right:10px"
+                        style="width:150px;margin-right:5px"
                         @change="get_clients_list">
                         <el-option label="All Brands"
                             value="">
@@ -76,6 +92,7 @@
         <add-dialog v-if="dialog.isVisible"
             :is-edit="dialog.isEdit"
             :ids="dialog.ids"
+            :industry-options="industryList"
             :type="dialog.type"
             @close="handle_dialog_close"
             @submit="handle_dialog_submit"> </add-dialog>
@@ -93,6 +110,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import fetch from "@/services/fetch";
 import breadCrumb from "@/components/common/bread-crumb";
 import clientCardList from "@/views/settings/common/client-card-list";
 import roleSelectTree from "@/components/common/select-tree";
@@ -118,10 +136,13 @@ export default {
       },
 
       cards: [],
+
+      industry: "",
       client: "",
       brand: "",
       keywords: "",
 
+      industryList: [],
       clientList: [],
       brandList: [],
       blankTips: ""
@@ -135,7 +156,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("settings", ["fetch_clients_list", "fetch_client_add", "fetch_client_delete", "fetch_barnd_list", "fetch_custom_list"]),
+    ...mapActions("settings", ["fetch_barnd_list", "fetch_custom_list"]),
 
     async get_custom_filter_list() {
       try {
@@ -145,6 +166,9 @@ export default {
       }
     },
 
+    handle_change_industry() {
+      this.get_brand_filter_list();
+    },
     handle_change_client() {
       this.brand = "";
       this.get_brand_filter_list();
@@ -162,7 +186,49 @@ export default {
     async get_clients_list() {
       try {
         this.isLoading = true;
-        this.cards = await this.fetch_clients_list({ keywords: this.keywords, client_id: this.client, brand_id: this.brand });
+
+        let { data } = await fetch.post("/user/clientlist", {
+          keywords: this.keywords,
+          industry_id: this.industry,
+          client_id: this.client,
+          brand_id: this.brand
+        });
+
+        // data = [
+        //   {
+        //     id: "167",
+        //     serial: "1",
+        //     name: "test_1218_001",
+        //     industry: "Communication Services",
+        //     created_at: "2019-12-18 18:08:24",
+        //     updated_at: "2019-12-18 18:08:24",
+        //     children: [
+        //       {
+        //         id: "167_41",
+        //         serial: "1-1",
+        //         name: "test_1218_p_001",
+        //         client_id: "167",
+        //         created_at: "2019-12-18 18:09:07",
+        //         updated_at: "2019-12-18 18:09:07",
+        //         ids: "41",
+        //         children: [
+        //           {
+        //             id: "167_41_219",
+        //             serial: "1-1-1",
+        //             product_id: "219",
+        //             name: "test_1218_k_001",
+        //             brand_id: "41",
+        //             created_at: "2019-12-18 18:09:24",
+        //             updated_at: "2019-12-18 18:09:24"
+        //           }
+        //         ]
+        //       }
+        //     ]
+        //   }
+        // ];
+
+        this.cards = data;
+
         if (this.cards && this.cards.length > 0) {
           this.blankTips = "";
         } else {
@@ -213,7 +279,7 @@ export default {
     },
 
     //删除
-    handle_card_list_delete(data) {
+    async handle_card_list_delete(data) {
       let type = "";
       if (data.level == 1) {
         type = "client";
@@ -222,25 +288,24 @@ export default {
       } else if (data.level == 3) {
         type = "product";
       }
-      this.fetch_client_delete({ id: data.id, type })
-        .then(res => {
-          this.$message.success("Deleted");
 
-          //如果删除的是过滤的那个，则删除成功后，直接将过滤选中的清空。避免无法匹配出现数字
-          if (type == "client") {
-            this.client = "";
-            this.get_custom_filter_list();
-            this.get_clients_list();
-          } else if (type == "brand") {
-            this.brand = "";
-            this.get_brand_filter_list();
-          } else {
-            this.get_brand_filter_list();
-          }
-        })
-        .catch(err => {
-          this.$message.error(err.message);
-        });
+      await fetch.post("/user/delclient", { id: data.id, type }).catch(err => {
+        this.$message.error(err.message);
+      });
+
+      this.$message.success("Deleted");
+
+      //如果删除的是过滤的那个，则删除成功后，直接将过滤选中的清空。避免无法匹配出现数字
+      if (type == "client") {
+        this.client = "";
+        this.get_custom_filter_list();
+        this.get_clients_list();
+      } else if (type == "brand") {
+        this.brand = "";
+        this.get_brand_filter_list();
+      } else {
+        this.get_brand_filter_list();
+      }
     },
     handle_dialog_close() {
       this.dialog.isVisible = false;
@@ -249,10 +314,18 @@ export default {
       this.get_custom_filter_list();
       this.get_brand_filter_list();
       this.dialog.isVisible = false;
+    },
+
+    async fetch_industry_list() {
+      let data = [{ id: 1, name: "Transportation" }, { id: 2, name: "Medical Services" }, { id: 3, name: "Consumer electronics" }];
+
+      // let { data } = await fetch.get("/user/getindustry").catch(err=>{this.$message.error(err.message);});
+      this.industryList = data;
     }
   },
 
   mounted() {
+    this.fetch_industry_list();
     this.get_custom_filter_list();
     this.get_brand_filter_list();
   }

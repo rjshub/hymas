@@ -117,7 +117,7 @@ export default {
     overflow: auto;
     background-color: white;
 
-    /deep/ .el-tabs {
+    ::v-deep .el-tabs {
       display: flex;
       flex-direction: column;
       flex: 1;

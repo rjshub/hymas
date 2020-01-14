@@ -86,7 +86,7 @@ export default {
       this.$emit("close");
     },
 
-    handle_submit() {
+    async handle_submit() {
       let hasParents = this.relates.filter(item => {
         return item.parent != "";
       });
@@ -99,60 +99,28 @@ export default {
         }
       });
 
-      this.fetch_add_fields(result)
-        .then(res => {
-          this.$emit("save", result);
-        })
-        .catch(err => {
-          this.$message.error(err.message);
-        });
+      try {
+        await fetch.post("/maintenance/verified_tab_add", { relates: result });
+        this.$emit("save", result);
+      } catch (err) {
+        this.$message.error(err.message);
+      }
     },
 
     handle_add() {
       this.relates.push({ parent: "" });
     },
 
-    fetch_data_source_all_fields(data) {
-      return new Promise((resolve, reject) => {
-        let result = [];
-        result = [{ id: 1, name: "group" }, { id: 2, name: "brand" }, { id: 3, name: "product" }];
+    async fetch_data_source_all_fields(params) {
+      let data = [{ id: 1, name: "group" }, { id: 2, name: "brand" }, { id: 3, name: "product" }];
 
-        resolve(result);
-        return;
-
-        fetch
-          .post("/source/all_fields", data)
-          .then(res => {
-            if (res.ret == 0) {
-              resolve(res.data);
-            } else {
-              reject(new Error(res.msg));
-            }
-          })
-          .catch(err => {
-            reject(err);
-          });
-      });
-    },
-
-    fetch_add_fields(data) {
-      return new Promise((resolve, reject) => {
-        // resolve();
-        // return;
-
-        fetch
-          .post("/maintenance/verified_tab_add", {relates:data})
-          .then(res => {
-            if (res.ret == 0) {
-              resolve(res.data);
-            } else {
-              reject(new Error(res.msg));
-            }
-          })
-          .catch(err => {
-            reject(err);
-          });
-      });
+      try {
+        // let { data } = await fetch.post("/source/all_fields", data);
+        return data;
+      } catch (err) {
+        this.$message.error(err.message);
+        return [];
+      }
     },
 
     handle_add_relate(index) {
@@ -168,7 +136,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .add-field {
-  /deep/ .el-dialog__body {
+  ::v-deep .el-dialog__body {
     padding-top: 0;
     padding-bottom: 0;
     height: 200px;

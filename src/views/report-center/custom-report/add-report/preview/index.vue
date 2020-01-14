@@ -69,12 +69,14 @@
                                         v-model="filter.selects[item.key]"
                                         filterable
                                         clearable
+                                        multiple
+                                        collapse-tags
                                         :placeholder="getPlaceholder(item.name)"
                                         @change="handle_change_group(item.key)">
-                                        <el-option v-for="item in groupOptions"
-                                            :key="item.id"
-                                            :label="item.name"
-                                            :value="item.id">
+                                        <el-option v-for="jtem in groupOptions"
+                                            :key="jtem.id"
+                                            :label="jtem.name"
+                                            :value="jtem.id">
                                         </el-option>
                                     </el-select>
                                 </template>
@@ -85,12 +87,14 @@
                                         v-model="filter.selects[item.key]"
                                         filterable
                                         clearable
+                                        multiple
+                                        collapse-tags
                                         :placeholder="getPlaceholder(item.name)"
                                         @change="handle_change_brand(item.key)">
-                                        <el-option v-for="item in brandOptions"
-                                            :key="item.id"
-                                            :label="item.name"
-                                            :value="item.id">
+                                        <el-option v-for="jtem in brandOptions"
+                                            :key="jtem.id"
+                                            :label="jtem.name"
+                                            :value="jtem.id">
                                         </el-option>
                                     </el-select>
                                 </template>
@@ -101,12 +105,14 @@
                                         v-model="filter.selects[item.key]"
                                         filterable
                                         clearable
+                                        multiple
+                                        collapse-tags
                                         :placeholder="getPlaceholder(item.name)"
                                         @change="handle_change_product(item.key)">
-                                        <el-option v-for="item in productOptions"
-                                            :key="item.id"
-                                            :label="item.name"
-                                            :value="item.id">
+                                        <el-option v-for="jtem in productOptions"
+                                            :key="jtem.id"
+                                            :label="jtem.name"
+                                            :value="jtem.id">
                                         </el-option>
                                     </el-select>
                                 </template>
@@ -117,12 +123,14 @@
                                         v-model="filter.selects[item.key]"
                                         filterable
                                         clearable
+                                        multiple
+                                        collapse-tags
                                         :placeholder="getPlaceholder(item.name)"
                                         @change="handle_change_select(item.key)">
-                                        <el-option v-for="item in getOptions(item.value)"
-                                            :key="item.id"
-                                            :label="item.name"
-                                            :value="item.id">
+                                        <el-option v-for="jtem in getOptions(item.value)"
+                                            :key="jtem.id"
+                                            :label="jtem.name"
+                                            :value="jtem.id">
                                         </el-option>
                                     </el-select>
                                 </template>
@@ -321,9 +329,9 @@ export default {
       this.currentPage = 1;
 
       //清空brand和 product选项
-      this.filter.selects["brand"] = "";
+      this.filter.selects["brand"] = [];
 
-      let value = this.filter.selects[key] ? this.filter.selects[key] : "";
+      let value = this.filter.selects[key] ? this.filter.selects[key] : [];
       this.fetch_brand_by_group({ ...this.getStep1Params(), client: value }).then(res => {
         this.brandOptions = res.map(item => {
           return { id: item.name, name: item.name };
@@ -332,11 +340,11 @@ export default {
 
       if (this.filter.selects["group"] == "ELC") {
         //即 group 为ELC时,产品要联动
-        this.filter.selects["product"] = "";
+        this.filter.selects["product"] = [];
         this.get_product_by_brand("");
       } else {
         if (this.prevGroup == "ELC") {
-          this.filter.selects["product"] = "";
+          this.filter.selects["product"] = [];
         }
         this.get_product_by_brand("");
       }
@@ -350,7 +358,7 @@ export default {
 
       if (this.filter.selects["group"] == "ELC") {
         //即 group 为ELC时,产品要联动
-        this.filter.selects["product"] = "";
+        this.filter.selects["product"] = [];
 
         this.get_product_by_brand(this.filter.selects[key]);
       }
@@ -420,7 +428,7 @@ export default {
       }
 
       for (let item of this.allFilters) {
-        this.$set(this.filter.selects, item.key, "");
+        this.$set(this.filter.selects, item.key, []);
       }
     },
 
@@ -660,7 +668,7 @@ export default {
       padding: 0 10px;
       margin-top: 10px;
       margin-bottom: 10px;
-      /deep/ .el-select {
+      ::v-deep .el-select {
         input::placeholder {
           color: #606266;
         }
@@ -671,14 +679,14 @@ export default {
       flex: 1;
       contain: strict;
 
-      /deep/ .table-header-class {
+      ::v-deep .table-header-class {
         background-color: #3895c5 !important;
       }
 
-      /deep/ .el-table {
+      ::v-deep .el-table {
         td,
         th {
-          padding: 5px 0 5px 0;
+          padding: 2px 0 2px 0;
           &.gutter {
             border-bottom: 1px solid #ebeef5;
           }

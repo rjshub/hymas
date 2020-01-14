@@ -2,32 +2,39 @@
     <div class="table-maintain">
         <bread-crumb :values="breadCrumbList"></bread-crumb>
 
-        <div class="main"
-            v-loading="isLoading"
-            element-loading-spinner="iconfont mas-loading">
+        <div v-loading="isLoading"
+            element-loading-spinner="iconfont mas-loading"
+            class="main">
             <div class="info-area">
-                <div class="text">{{info.name}}</div>
-                <div class="time">{{info.update_time}}</div>
+                <!-- <div class="text">{{info.name}}</div> -->
+                <div class="text">Mapping Table-Code Table</div>
+                <div class="time">Updated Time: {{info.update_time}}</div>
                 <div class="btn">
-                    <el-button type="primary"
-                        plain
-                        size="mini"
-                        @click="handle_download">
-                        <i class="iconfont mas-download"></i>
-                    </el-button>
 
-                    <el-upload style="display: inline-block;"
-                        :action="info.upload_url"
-                        :show-file-list="false"
-                        :before-upload="handleBeforeUpload"
-                        :on-success="handleSuccess"
-                        :on-error="handleError"
-                        :http-request="$uploadHttpRequest">
-                        <el-button size="mini"
-                            type="primary"
+                    <hy-box>
+                        <el-button type="primary"
                             plain
-                            class="iconfont mas-upload"></el-button>
-                    </el-upload>
+                            size="mini"
+                            @click="handle_download">
+                            <i class="iconfont mas-download"></i>
+                        </el-button>
+                    </hy-box>
+
+                    <hy-box>
+                        <el-upload style="display: inline-block;"
+                            :action="info.upload_url"
+                            :data="{id: info.id}"
+                            :show-file-list="false"
+                            :before-upload="handleBeforeUpload"
+                            :on-success="handleSuccess"
+                            :on-error="handleError"
+                            :http-request="$uploadHttpRequest">
+                            <el-button size="mini"
+                                type="primary"
+                                plain
+                                class="iconfont mas-upload"></el-button>
+                        </el-upload>
+                    </hy-box>
 
                 </div>
             </div>
@@ -42,232 +49,84 @@
                         :disabled="selections.length==0"
                         plain
                         size="mini"
-                        @click="handle_delete">
+                        @click="handle_delete({id:selections})">
                         <i class="el-icon-delete"></i>
                     </el-button>
 
                 </div>
-                <div class="table-wrap"
-                    v-loading="isLoading"
-                    element-loading-spinner="iconfont mas-loading">
-                    <el-table :data="tableData"
+                <div v-loading="isLoading"
+                    element-loading-spinner="iconfont mas-loading"
+                    class="table-wrap">
+
+                    <el-table v-if="tableData && tableData.length>0"
+                        :data="tableData"
                         height="100px"
-                        stripe
-                        @selection-change="handle_section_change"
-                        header-row-class-name="table-header-class"
-                        style="min-height:100%;width: 100%">
+                        header-row-class-name="blue"
+                        style="min-height:100%;width: 100%"
+                        @selection-change="handle_section_change">
+
                         <el-table-column type="selection"
                             :selectable="isSelectable"
                             align="center"
                             width="50">
                         </el-table-column>
-                        <el-table-column prop="id"
-                            align="center"
-                            width="100"
-                            label="媒体编号">
-                            <template v-slot="scope">
-                                <span v-if="scope.row.operate=='edit'">
-                                    <el-input v-model="scope.row.id"
-                                        size="mini"></el-input>
-                                </span>
-                                <span v-else-if="scope.row.operate=='add'">
-                                    <el-input v-model="scope.row.id"
-                                        size="mini"></el-input>
-                                </span>
-                                <span v-else>
-                                    {{scope.row.id}}
-                                </span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="code_level_1"
-                            align="center"
-                            :show-overflow-tooltip="true"
-                            label="位置编码一级">
-                            <template v-slot="scope">
-                                <span v-if="scope.row.operate=='edit'">
-                                    <el-input v-model="scope.row.code_level_1"
-                                        size="mini"></el-input>
-                                </span>
-                                <span v-else-if="scope.row.operate=='add'">
-                                    <el-input v-model="scope.row.code_level_1"
-                                        size="mini"></el-input>
-                                </span>
-                                <span v-else>
-                                    {{scope.row.code_level_1}}
-                                </span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="code_level_2"
-                            width="160"
-                            align="center"
-                            label="位置编码二级">
-                            <template v-slot="scope">
-                                <span v-if="scope.row.operate=='edit'">
-                                    <el-input v-model="scope.row.code_level_2"
-                                        size="mini"></el-input>
-                                </span>
-                                <span v-else-if="scope.row.operate=='add'">
-                                    <el-input v-model="scope.row.code_level_2"
-                                        size="mini"></el-input>
-                                </span>
-                                <span v-else>
-                                    {{scope.row.code_level_2}}
-                                </span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="update_time"
-                            width="160"
-                            align="center"
-                            label="广告位置编号">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="媒体集团">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="媒体(英)">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="媒体(中)">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="频道">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="广告位置名称">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="位置备注">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="Platform">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="City（中文）">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="购买单位">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="轮播所占份数">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="刊例单价">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="刊例版本">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="刊例开始日期">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="刊例结束日期">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="广告位置创建日期">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="广告位置最近更新日期">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="备注">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="Media Type(大类别)">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="Media Type(小类别)">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="Format Label 1">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="Format Label 2">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="Format Label 3">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="问题">
-                        </el-table-column>
-                        <el-table-column prop="status"
-                            width="90"
-                            align="center"
-                            label="排期广告位">
-                        </el-table-column>
+
+                        <template v-for="(item,index) in tableHeaders">
+                            <el-table-column :key="item.prop"
+                                :label="item.name"
+                                :show-overflow-tooltip="true"
+                                :prop="item.prop"
+                                min-width="200"
+                                align="center">
+                                <template v-slot="{row, column}">
+                                    <span v-if="row.operate=='edit'"
+                                        :class="{validateError: item.required && !row.row[index].value}">
+                                        <el-input v-model="row.row[index].value"
+                                            size="mini"></el-input>
+                                    </span>
+
+                                    <span v-else-if="row.operate=='add'"
+                                        :class="{validateError: item.required && !row.row[index].value}">
+                                        <el-input v-model="row.row[index].value"
+                                            size="mini"></el-input>
+                                    </span>
+                                    <span v-else>
+                                        {{getColumnValue(row, column)}}
+                                    </span>
+                                </template>
+                            </el-table-column>
+                        </template>
+
                         <el-table-column label="Operating"
                             fixed="right"
-                            width="250"
+                            width="150"
                             align="center">
-                            <template v-slot="scope">
+                            <template v-slot="{row,column}">
                                 <div class="table-operate-column">
-                                    <i v-if="!scope.row.operate"
+                                    <i v-if="!row.operate"
                                         class="iconfont mas-edit"
                                         title="Edit"
-                                        @click="handle_edit(scope.row,scope.column)"></i>
+                                        @click="handle_edit(row,column)"></i>
                                     <i v-else
                                         class="el-icon-check"
-                                        style="color:#009900"
+                                        style="font-size:18px;color:#009900;font-weight: bold;"
                                         title="Submit"
-                                        @click="handle_submit(scope.row,scope.column)"></i>
-                                    <i v-if="!scope.row.operate"
+                                        @click="handle_submit(row,column)"></i>
+                                    <i v-if="!row.operate"
                                         class="el-icon-delete"
                                         title="Delete"
-                                        @click="handle_delete(scope.row)"></i>
+                                        @click="handle_delete(row)"></i>
                                     <i v-else
                                         class="el-icon-close"
-                                        style="color:red"
+                                        style="font-size:18px;color:red;font-weight:bold;"
                                         title="Cancel"
-                                        @click="handle_cancel(scope.row)"></i>
+                                        @click="handle_cancel(row)"></i>
                                 </div>
                             </template>
                         </el-table-column>
                     </el-table>
+                    <div v-else
+                        class="no-data">No Data</div>
                 </div>
             </div>
         </div>
@@ -286,14 +145,6 @@ export default {
   components: { breadCrumb },
 
   data() {
-    let validateName = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error("Name is required, 并且使用逗号分隔"));
-      } else {
-        return callback();
-      }
-    };
-
     return {
       isLoading: false,
       breadCrumbList: [
@@ -308,13 +159,15 @@ export default {
         download_url: ""
       },
       selections: [],
-      tableData: []
+      tableDataClone: [],
+      tableData: [],
+
+      tableHeaders: []
     };
   },
   computed: {},
 
   methods: {
-    ...mapActions("settings", ["fetch_code_table_list", "fetch_code_table_add", "fetch_code_table_edit", "fetch_code_table_delete"]),
     isSelectable(row, index) {
       if (row.operate == "add") {
         return false;
@@ -326,10 +179,48 @@ export default {
       try {
         this.isLoading = true;
 
-        let res = await this.fetch_code_table_list();
-        this.tableData = res.map(item => {
+        this.tableData = [];
+
+        let data = [
+          {
+            id: 1,
+            row: [
+              { name: "时间", value: "2019-07-10", prop: "advertising_date", required: true },
+              { name: "品牌", value: "lancome", prop: "brand", required: true },
+              { name: "产品", value: "小黑瓶", prop: "product" },
+              { name: "product1", value: "小黑瓶", prop: "product1" },
+              { name: "product2", value: "小黑瓶", prop: "product2" },
+              { name: "product3", value: "小黑瓶", prop: "product3" },
+              { name: "product4", value: "小黑瓶", prop: "product4" }
+            ]
+          },
+          {
+            id: 2,
+            row: [
+              { name: "时间", value: "2019-07-10", prop: "advertising_date", required: true },
+              { name: "品牌", value: "lancome", prop: "brand", required: true },
+              { name: "产品", value: "小黑瓶", prop: "product" },
+              { name: "product1", value: "小黑瓶", prop: "product1" },
+              { name: "product2", value: "小黑瓶", prop: "product2" },
+              { name: "product3", value: "小黑瓶", prop: "product3" },
+              { name: "product4", value: "小黑瓶", prop: "product4" }
+            ]
+          }
+        ];
+
+        // let { data } = await fetch.post("/maintenance/mapping_table_list", { id: this.info.id });
+
+        if (data.length > 0) {
+          this.tableHeaders = data[0].row.map(item => {
+            return { name: item.name, prop: item.prop, required: item.required };
+          });
+        }
+
+        this.tableData = data.map(item => {
           return { ...item, operate: "" };
         });
+
+        this.tableDataClone = _.cloneDeep(this.tableData);
         this.isLoading = false;
       } catch (err) {
         this.isLoading = false;
@@ -338,7 +229,7 @@ export default {
     },
 
     handle_download() {
-      this.$downloadFile(this.info.download_url);
+      this.$downloadFile({ url: this.info.download_url });
     },
 
     handleBeforeUpload(file) {
@@ -357,6 +248,7 @@ export default {
 
     handleSuccess() {
       this.$message.success("Uploaded successfully.");
+      this.get_code_table_list();
     },
 
     handleError(err, file, fileList) {
@@ -369,10 +261,13 @@ export default {
     },
 
     handle_add(row, column) {
+      let newRow = this.tableHeaders.map(item => {
+        return { name: item.name, prop: item.prop, value: "", required: item.required };
+      });
+
       this.tableData.unshift({
         id: uuidv1(),
-        code_level_1: "",
-        code_level_2: "",
+        row: newRow,
         operate: "add"
       });
     },
@@ -386,63 +281,91 @@ export default {
         this.tableData = this.tableData.filter(item => {
           return item.id != row.id;
         });
+      } else {
+        //编辑
+        for (let item of this.tableData) {
+          if (item.id == row.id) {
+            item.row = this.tableDataClone.find(jtem => {
+              return jtem.id == row.id;
+            }).row;
+          }
+        }
+        this.tableData;
       }
       row.operate = "";
     },
 
-    handle_submit(row, column) {
+    async handle_submit(row, column) {
       //提交前的校验
-      console.log("row,", row, column);
       let validate = true;
-      for (let item in row) {
-        if (String(row[item]).trim() == "") {
-          this.$message.warning("不能有空值");
-          validate = false;
-          break;
+
+      console.log("row===", row);
+
+      for (let item of row.row) {
+        if (item.required) {
+          if (item.value.trim() == "") {
+            this.$message.warning("不能有空值");
+            validate = false;
+            break;
+          }
         }
       }
 
       if (validate) {
-        if (row.operate == "add") {
-          let addData = [row];
-          this.fetch_code_table_add(addData)
-            .then(res => {
-              row.operate = "";
-            })
-            .catch(err => {
-              this.$message.error(err.message);
-            });
-        } else if (row.operate == "edit") {
-          let editData = [row];
-          this.fetch_code_table_edit(editData)
-            .then(res => {
-              row.operate = "";
-            })
-            .catch(err => {
-              this.$message.error(err.message);
-            });
+        try {
+          if (row.operate == "add") {
+            let addData = row.row;
+            let { data } = await fetch.post("/maintenance/mapping_row_add", { row: addData });
+            row.operate = "";
+            row.id = data.id;
+            this.tableDataClone = _.cloneDeep(this.tableData);
+          } else if (row.operate == "edit") {
+            let editData = row.row;
+
+            let { data } = await fetch.post("/codeTable/edit", { row: editData });
+            row.operate = "";
+            this.tableDataClone = _.cloneDeep(this.tableData);
+          }
+        } catch (err) {
+          this.$message.error(err.message);
         }
       }
     },
-    handle_delete() {
+    handle_delete(row) {
       this.$confirm("Are you sure to delete?", "Tips", {
         confirmButtonText: "Confirm",
         cancelButtonText: "Cancel",
         closeOnClickModal: false,
         type: "warning",
-        callback: action => {
+        callback: async action => {
           if (action == "confirm") {
-            this.fetch_code_table_delete(this.selections)
-              .then(res => {
-                this.$message.success("Delete successfully");
-                this.get_code_table_list();
-              })
-              .catch(err => {
-                this.$message.error(err.message);
+            let params = Array.isArray(row.id) ? row.id : [row.id];
+
+            try {
+              await fetch.post("/codeTable/delete", { id: params });
+              this.$message.success("Delete successfully");
+              this.tableData = this.tableData.filter(item => {
+                let has = params.find(jtem => {
+                  return jtem == item.id;
+                });
+                return !has;
               });
+
+              this.tableDataClone = _.cloneDeep(this.tableData);
+            } catch (err) {
+              this.$message.error(err.message);
+            }
           }
         }
       });
+    },
+
+    getColumnValue(row, column) {
+      let result = row.row.find(item => {
+        return item.prop == column.property;
+      });
+
+      return result.value;
     }
   },
 
@@ -506,13 +429,53 @@ export default {
 
       .table-wrap {
         flex: 1;
+        display: flex;
         contain: strict;
 
         .table-operate-column {
+          display: flex;
+          justify-content: center;
+
           i {
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
+            margin-right: 20px;
+
+            &:last-child {
+              margin-right: 0;
+            }
           }
+        }
+
+        ::v-deep .el-table {
+          th {
+            padding: 2px;
+          }
+
+          td {
+            padding: 0;
+            background: #fafafa;
+            .cell {
+              padding: 5px;
+            }
+          }
+
+          .validateError {
+            input {
+              border: 1px solid #f44336;
+            }
+          }
+        }
+
+        .no-data {
+          flex: 1;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #adadad;
+          border: 1px solid #e1e1e1;
+          box-sizing: border-box;
         }
       }
     }

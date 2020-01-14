@@ -24,7 +24,7 @@
                         v-model="filter.month"
                         filterable
                         placeholder="Select Month"
-                        @change="fetch_table_data">
+                        @change="handle_month_change">
                         <el-option v-for="item in monthOptions"
                             :key="item.id"
                             :label="item.name"
@@ -488,6 +488,7 @@
                 :total-table-data="totalTableData"
                 :other-table-data="otherTableData"
                 :cols-list="colsList"
+                :label="totalTitle"
                 @close="isShowZoomIn=false"></competitor-zoom-in>
         </transition>
     </div>
@@ -583,6 +584,11 @@ export default {
     },
     async handle_year_change() {
       await this.fetch_filter_data_by_year();
+      await this.fetch_table_data();
+    },
+
+    async handle_month_change() {
+      this.setTotalTitle();
       await this.fetch_table_data();
     },
 
@@ -713,22 +719,7 @@ export default {
             this.filter.month = "";
           }
 
-          let monthMap = {
-            1: "Jan",
-            2: "Feb",
-            3: "Mar",
-            4: "Apr",
-            5: "May",
-            6: "Jun",
-            7: "Jul",
-            8: "Aug",
-            9: "Sep",
-            10: "Oct",
-            11: "Nov",
-            12: "Dec"
-          };
-
-          this.totalTitle = monthMap[this.filter.month];
+          this.setTotalTitle();
         } else {
           this.$message.error(res.msg);
         }
@@ -736,6 +727,25 @@ export default {
         this.$message.error(err.message);
         this.isLoading = false;
       }
+    },
+
+    setTotalTitle() {
+      let monthMap = {
+        1: "Jan",
+        2: "Feb",
+        3: "Mar",
+        4: "Apr",
+        5: "May",
+        6: "Jun",
+        7: "Jul",
+        8: "Aug",
+        9: "Sep",
+        10: "Oct",
+        11: "Nov",
+        12: "Dec"
+      };
+
+      this.totalTitle = monthMap[this.filter.month];
     },
 
     async fetch_table_data() {
@@ -819,7 +829,7 @@ export default {
       padding: 10px;
     }
 
-    /deep/ .el-table {
+    ::v-deep .el-table {
       margin-bottom: 50px;
 
       td,

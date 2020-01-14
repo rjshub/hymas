@@ -292,8 +292,8 @@ export default {
           this.form.dataSourceRadio = "1";
           this.dataSourceRadioPrev = "1";
         } else {
-          this.form.dataSourceRadio = this.values.dataSourceRadio || "2";
-          this.dataSourceRadioPrev = this.values.dataSourceRadio || "2";
+          this.form.dataSourceRadio = this.values.dataSourceRadio || "1";
+          this.dataSourceRadioPrev = this.values.dataSourceRadio || "1";
         }
 
         //设置 时间
@@ -670,7 +670,7 @@ export default {
       height: 6px;
     }
 
-    /deep/ .end-date {
+    ::v-deep .end-date {
       input::placeholder {
         color: #606266;
       }
@@ -724,7 +724,7 @@ export default {
   }
 
   .report__add-dialog {
-    /deep/ .el-dialog__body {
+    ::v-deep .el-dialog__body {
       .el-transfer {
         .el-transfer-panel {
           width: 330px;

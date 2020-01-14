@@ -63,8 +63,8 @@ export default {
     },
 
     setSubMenuList(route) {
-      console.log("route===",route);
-      
+      console.log("route===", route);
+
       if (route == "" || route.indexOf("home") > -1) {
         this.sildeMenuType = "HomeSlideMenu";
       } else if (route.indexOf("report-center") > -1) {
@@ -81,7 +81,6 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-
       this.setSubMenuList(this.route);
     });
   }
@@ -99,6 +98,8 @@ export default {
     height: calc(100vh - 60px);
     .el-aside {
       background-color: white;
+      border-right: 1px solid #dedede;
+      box-sizing: border-box;
     }
     .el-main {
       padding: 0;

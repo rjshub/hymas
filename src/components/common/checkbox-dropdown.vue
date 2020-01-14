@@ -124,7 +124,7 @@ export default {
 </style>
 <style lang="scss">
 .filter-popper {
-  /deep/ ::-webkit-scrollbar {
+  ::v-deep ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
   }

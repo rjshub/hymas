@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       $chart: null,
-      radius: ["50%", "65%"]
+      radius: ["35%", "90%"]
     };
   },
 
@@ -126,18 +126,6 @@ export default {
           top: 5,
           left: "center"
         },
-        // toolbox: {
-        //   show: true,
-        //   itemSize: 20,
-        //   right: 30,
-        //   top: -5,
-        //   feature: {
-        //     saveAsImage: {
-        //       show: true,
-        //       title: "Save to image"
-        //     }
-        //   }
-        // },
 
         tooltip: {
           trigger: "item", //可以单独浮动到对应的条目上，而不是展示x轴上所有的y选项
@@ -152,10 +140,10 @@ export default {
             let markerAfter = self.domToString(domAfter);
 
             let total = markerAfter + "Total: " + self.$formatMoney(param.data.total, 2);
-            let display = markerAfter + param.name + ": " + self.$formatMoney(param.value, 2);
+            // let display = markerAfter + param.name + ": " + self.$formatMoney(param.value, 2);
             let percent = markerAfter + "Percent: " + self.$formatMoney(param.percent, 2, "") + "%";
 
-            return total + "<br/>" + display + "<br/>" + percent;
+            return total + "<br/>" + percent;
           }
         },
         legend: {
@@ -200,23 +188,17 @@ export default {
             center: [piePostionCenter, "50%"], //圆心
             avoidLabelOverlap: false,
             label: {
-              normal: {
-                show: false,
-                position: "center"
-              },
-              emphasis: {
-                show: true,
-                textStyle: {
-                  fontSize: "30",
-                  fontWeight: "bold"
-                }
+              show: true,
+              position: "inside",
+              formatter: function(a, b, c) {
+                console.log("a,b,c", a, b, c);
+                return a.name + "\n(" + a.value + ")";
               }
             },
             labelLine: {
-              normal: {
-                show: false
-              }
+              show: true
             },
+            minAngle: 20,
             data: this.getSeries(this.values)
           }
         ]

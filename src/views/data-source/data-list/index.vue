@@ -1,79 +1,91 @@
 <template>
-    <div class="data-list">
-        <bread-crumb :values="breadCrumbList"></bread-crumb>
+  <div class="data-list">
+    <bread-crumb :values="breadCrumbList"></bread-crumb>
 
-        <div class="main">
-            <div class="tools">
-                <hy-box>
-                    <el-button :disabled="isReadOnly || (otherTab.length === 0 && !isELC)"
-                        type="primary"
-                        size="mini"
-                        icon="el-icon-plus"
-                        @click="handle_add_data">Add Data</el-button>
-                </hy-box>
+    <div class="main">
+      <div class="tools">
+        <hy-box>
+          <el-button
+            :disabled="isReadOnly || (otherTab.length === 0 && !isELC)"
+            type="primary"
+            size="mini"
+            icon="el-icon-plus"
+            @click="handle_add_data"
+          >Add Data</el-button>
+        </hy-box>
 
-                <hy-box>
-                    <el-select v-model="client"
-                        size="mini"
-                        filterable
-                        placeholder="Select Client"
-                        style="width:150px;"
-                        @change="handle_change_client">
-                        <el-option v-for="(item,index) in clientOptions"
-                            :key="index"
-                            :label="item.label"
-                            :value="item.value">
-                        </el-option>
-                    </el-select>
-                </hy-box>
+        <hy-box>
+          <el-select
+            v-model="client"
+            size="mini"
+            filterable
+            placeholder="Select Client"
+            style="width:150px;"
+            @change="handle_change_client"
+          >
+            <el-option
+              v-for="(item,index) in clientOptions"
+              :key="index"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </hy-box>
 
-                <hy-box>
-                    <el-button size="mini"
-                        :disabled="!hasChecked"
-                        title="Download"
-                        icon="iconfont mas-download"
-                        @click="handle_download"></el-button>
-                </hy-box>
+        <hy-box>
+          <el-button
+            size="mini"
+            :disabled="!hasChecked"
+            title="Download"
+            icon="iconfont mas-download"
+            @click="handle_download"
+          ></el-button>
+        </hy-box>
 
-                <hy-box>
-                    <el-button size="mini"
-                        :disabled="isReadOnly || !hasChecked"
-                        title="Delete"
-                        icon="el-icon-delete"
-                        @click="handle_delete"></el-button>
-                </hy-box>
+        <hy-box>
+          <el-button
+            size="mini"
+            :disabled="isReadOnly || !hasChecked"
+            title="Delete"
+            icon="el-icon-delete"
+            @click="handle_delete"
+          ></el-button>
+        </hy-box>
+      </div>
+      <el-tabs v-model="activeName" @tab-click="handle_tab_change" class="tab-table">
+        <el-tab-pane
+          v-if="permissionPerformance && isELC"
+          label="ELC Performance"
+          name="performance"
+        >
+          <performance ref="performance" :client="client" @section-change="handle_section_change"></performance>
+        </el-tab-pane>
+        <el-tab-pane
+          v-if="permissionCompetitorsSpending && isELC"
+          label="ELC&amp;competitors Spending"
+          name="competitors"
+        >
+          <competitors ref="competitors" :client="client" @section-change="handle_section_change"></competitors>
+        </el-tab-pane>
+        <el-tab-pane
+          v-for="(tabItem, index) in otherTab"
+          :key="index"
+          :label="tabItem.label"
+          :name="tabItem.name"
+        >
+          <formatTable :client="client"></formatTable>
+        </el-tab-pane>
 
-            </div>
-            <el-tabs v-model="activeName"
-                @tab-click="handle_tab_change"
-                class="tab-table">
-                <el-tab-pane v-if="permissionPerformance && isELC"
-                    label="ELC Performance"
-                    name="performance">
-                    <performance ref="performance"
-                        :client="client"
-                        @section-change="handle_section_change"></performance>
-                </el-tab-pane>
-                <el-tab-pane v-if="permissionCompetitorsSpending && isELC"
-                    label="ELC&amp;competitors Spending"
-                    name="competitors">
-                    <competitors ref="competitors"
-                        :client="client"
-                        @section-change="handle_section_change"></competitors>
-                </el-tab-pane>
-                <el-tab-pane v-for="(tabItem, index) in otherTab" :key="index" 
-                  :label="tabItem.label" :name="tabItem.name">
-                  <formatTable :client="client"></formatTable>
-                </el-tab-pane>
-
-                <div class="empty-message" v-show="otherTab.length === 0 && !isELC">
-                  <span>No Results Found.  {{otherTab.length === 0}}{{isELC}}</span>
-                  <span>Please go to " <a @click="toFormatSetting">Format Setting</a> " to create a data source template.</span>
-                </div>
-            </el-tabs>
+        <div class="empty-message" v-show="otherTab.length === 0 && !isELC">
+          <span>No Results Found. {{otherTab.length === 0}}{{isELC}}</span>
+          <span>
+            Please go to "
+            <a @click="toFormatSetting">Format Setting</a> " to create a data source template.
+          </span>
         </div>
-
+      </el-tabs>
     </div>
+  </div>
 </template>
 
 <script>
@@ -81,7 +93,7 @@ import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import breadCrumb from "@/components/common/bread-crumb";
 import performance from "./performance";
 import competitors from "./competitors";
-import formatTable from './formatTable'
+import formatTable from "./formatTable";
 
 export default {
   name: "Data-List",
@@ -90,7 +102,10 @@ export default {
   data() {
     return {
       activeName: "",
-      breadCrumbList: [{ path: "/data-source", name: "Data Source" }, { path: "", name: "Data List" }],
+      breadCrumbList: [
+        { path: "/data-source", name: "Data Source" },
+        { path: "", name: "Data List" }
+      ],
 
       hasChecked: false, //勾选行数
       client: "1", //客户
@@ -108,7 +123,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("dataSource/dataList", ["permissionPerformance", "permissionCompetitorsSpending"]),
+    ...mapGetters("dataSource/dataList", [
+      "permissionPerformance",
+      "permissionCompetitorsSpending"
+    ]),
 
     isReadOnly() {
       if (this.activeName == "performance") {
@@ -125,21 +143,21 @@ export default {
         }
       }
     },
-    isELC () {
-      let state = true
+    isELC() {
+      let state = true;
       if (this.clientOptions.length > 0) {
         let index = this.clientOptions.findIndex(obj => {
-          return obj.value === this.client
-        })
-        if (this.clientOptions[index].label === 'ELC') {
-          state = true
+          return obj.value === this.client;
+        });
+        if (this.clientOptions[index].label === "ELC") {
+          state = true;
         } else {
-          state = false
+          state = false;
         }
       } else {
-        state = false
+        state = false;
       }
-      return state
+      return state;
     }
   },
 
@@ -147,7 +165,7 @@ export default {
     ...mapActions("home", ["fetch_filter_list"]),
 
     toFormatSetting() {
-      this.$router.push({path: '/data-source/format-setting'})
+      this.$router.push({ path: "/data-source/format-setting" });
     },
     handle_add_data() {
       this.$router.push({
@@ -260,7 +278,7 @@ export default {
         margin: auto;
         span:nth-child(1) {
           font-weight: 700;
-          color: #7F7F7F;
+          color: #7f7f7f;
         }
         span {
           width: 100%;
@@ -270,7 +288,7 @@ export default {
             cursor: pointer;
             font-weight: 700;
             text-decoration: underline;
-            color: #0000FF;
+            color: #0000ff;
           }
         }
       }

@@ -1,16 +1,16 @@
 <template>
-    <el-select v-model="value"
-        ref="selectRef"
+    <el-select ref="selectRef"
+        v-model="value"
         :multiple="multiple"
         collapse-tags
         :filterable="filterable"
         :clearable="clearable"
         :style="{width:selectWidth}"
         :multiple-limit="limit"
-        @change="change_select"
         size="mini"
         :class="{overlap:isOverlapPlaceholderColor }"
-        :placeholder="placeholder">
+        :placeholder="placeholder"
+        @change="change_select">
         <slot></slot>
         <el-option v-for="item in options"
             :key="item[prop.value]"
@@ -25,7 +25,7 @@ export default {
   name: "Filter-Select",
   components: {},
   model: {
-    prop: "checked", 
+    prop: "checked",
     event: "change"
   },
 
@@ -112,8 +112,13 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-/deep/ .el-select {
+.el-select {
   transition: all ease-in-out 1s;
+  margin-right: 5px;
+
+  // & + .el-select {
+  //   margin-left: 0;
+  // }
 
   .el-tag {
     margin: 0px 0 0px 3px;
@@ -129,9 +134,5 @@ export default {
       color: #606266;
     }
   }
-}
-
-.el-select + .el-select {
-  margin-left: 5px;
 }
 </style>

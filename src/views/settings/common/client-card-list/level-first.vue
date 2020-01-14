@@ -5,7 +5,7 @@
             <div class="name">
                 <div v-hover
                     class="text">
-                    <span>{{values.name}}</span>
+                    <span>{{values.serial}}</span>
                 </div>
 
                 <span class="more">
@@ -28,6 +28,19 @@
 
                 </span>
             </div>
+            <div class="name">
+                <div v-hover
+                    class="text">
+                    <span>{{values.name}}</span>
+                </div>
+            </div>
+            <div class="status">
+                <div v-hover
+                    class="text">
+                    <span>{{values.industry}}</span>
+                </div>
+            </div>
+
             <div class="status">
                 <span class="time">
                     Updated on {{values.updated_at}}
@@ -132,7 +145,7 @@ export default {
   display: flex;
   padding: 15px;
   width: 250px;
-  height: 110px;
+  height: 150px;
   border-radius: 5px;
   margin-right: 10px;
   margin-bottom: 10px;

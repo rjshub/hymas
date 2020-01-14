@@ -244,7 +244,7 @@ export default {
         callback: async action => {
           if (action == "confirm") {
             try {
-              await this.fetch_verified_delete({ id: event.id, fieldId: item.id });
+              await fetch.post("/maintenance/verified_delete", { id: event.id, fieldId: item.id });
               this.tabData = await this.fetch_verified_list();
             } catch (err) {
               this.$message.error(err.message);
@@ -269,14 +269,13 @@ export default {
       this.addDialogVisible = true;
     },
 
-    handle_change_status(relate) {
-      this.fetch_verified_change_status({ status: Number(!relate.status) })
-        .then(res => {
-          relate.status = Number(!relate.status);
-        })
-        .catch(err => {
-          this.$message.error(err.message);
-        });
+    async handle_change_status(relate) {
+      try {
+        await fetch.post("/maintenance/verified_field_status", { status: Number(!relate.status) });
+        relate.status = Number(!relate.status);
+      } catch (err) {
+        this.$message.error(err.message);
+      }
     },
     handle_dialog_close() {
       this.addDialogVisible = false;
@@ -292,20 +291,20 @@ export default {
     },
 
     handle_dialog_submit() {
-      this.$refs["addForm"].validate(valid => {
+      this.$refs["addForm"].validate(async valid => {
         if (valid) {
           let param = _.cloneDeep(this.addForm);
 
-          this.fetch_verified_add({ fieldId: param.fieldId, parentId: param.id, name: param.name })
-            .then(res => {
-              this.tabData = this.fetch_verified_list();
-            })
-            .catch(err => {
-              this.$message.error(err.message);
-            });
+          try {
+            await fetch.post("/maintenance/verified_add", { fieldId: param.fieldId, parentId: param.id, name: param.name });
 
-          this.addDialogVisible = false;
-          this.resetForm();
+            this.addDialogVisible = false;
+            this.resetForm();
+
+            this.tabData = await this.fetch_verified_list();
+          } catch (err) {
+            this.$message.error(err.message);
+          }
         } else {
           return false;
         }
@@ -316,27 +315,9 @@ export default {
       this.$downloadFile({ url: this.info.download_url });
     },
 
-    // fixed table 删除
-    fetch_verified_change_status(data) {
-      return new Promise((resolve, reject) => {
-        fetch
-          .post("/maintenance/verified_field_status", data)
-          .then(res => {
-            if (res.ret == 0) {
-              resolve(res.data);
-            } else {
-              reject(new Error(res.msg));
-            }
-          })
-          .catch(err => {
-            reject(err);
-          });
-      });
-    },
-
     // 获取 fixed table 列表
-    fetch_verified_list(data) {
-      let result = [
+    async fetch_verified_list(params) {
+      let data = [
         {
           id: "1",
           relate: {
@@ -408,58 +389,13 @@ export default {
         }
       ];
 
-      return result;
-
-      return new Promise((resolve, reject) => {
-        fetch
-          .post("/maintenance/verified_list", data)
-          .then(res => {
-            if (res.ret == 0) {
-              resolve(res.data);
-            } else {
-              reject(new Error(res.msg));
-            }
-          })
-          .catch(err => {
-            reject(err);
-          });
-      });
-    },
-
-    // fixed table 删除
-    fetch_verified_delete(data) {
-      return new Promise((resolve, reject) => {
-        fetch
-          .post("/maintenance/verified_delete", data)
-          .then(res => {
-            if (res.ret == 0) {
-              resolve(res.data);
-            } else {
-              reject(new Error(res.msg));
-            }
-          })
-          .catch(err => {
-            reject(err);
-          });
-      });
-    },
-
-    // fixed table 添加
-    fetch_verified_add(data) {
-      return new Promise((resolve, reject) => {
-        fetch
-          .post("/maintenance/verified_add", data)
-          .then(res => {
-            if (res.ret == 0) {
-              resolve(res.data);
-            } else {
-              reject(new Error(res.msg));
-            }
-          })
-          .catch(err => {
-            reject(err);
-          });
-      });
+      try {
+        // let { data } = await fetch.post("/maintenance/verified_list", params);
+        return data;
+      } catch (err) {
+        this.$message.error(err.message);
+        return [];
+      }
     },
 
     handle_add() {
@@ -519,7 +455,7 @@ export default {
       flex: 1;
       background-color: white;
 
-      /deep/ .el-tabs {
+      ::v-deep .el-tabs {
         display: flex;
         flex-direction: column;
         flex: 1;

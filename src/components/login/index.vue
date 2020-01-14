@@ -137,7 +137,6 @@ export default {
   computed: {
     ...mapState("common", ["welcome", "copyright"]),
 
-    // ...mapGetters("home", ["homeSubRoute"]),
     ...mapGetters("reportCenter", ["reportSubRoute"]),
     ...mapGetters("dataSource", ["sourceSubRoute"]),
     ...mapGetters("settings", ["settingsSubRoute"])
@@ -331,20 +330,20 @@ export default {
         }
 
         .el-form {
-          /deep/ .el-form-item__label {
+          ::v-deep .el-form-item__label {
             padding: 0;
             line-height: 25px;
           }
-          /deep/ .el-input__inner {
+          ::v-deep .el-input__inner {
             border-radius: 30px;
           }
 
           .code {
-            /deep/ .el-input__inner {
+            ::v-deep .el-input__inner {
               border-radius: 30px;
             }
 
-            /deep/ .el-input-group__append {
+            ::v-deep .el-input-group__append {
               background-color: transparent;
               border: 0;
               width: 40%;

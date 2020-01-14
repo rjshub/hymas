@@ -250,6 +250,8 @@ export default {
 
     handleSuccess(response, file, fileList) {
       this.disabledUploadBtn = false;
+
+      this.fileList = [{ name: response.name, url: response.path }];
       this.cacheUploadRes = { ...response };
 
       if (this.uploadType != "performance") {
@@ -520,7 +522,7 @@ export default {
         }
 
         .quarter {
-          /deep/ .el-select {
+          ::v-deep .el-select {
             .el-input__inner {
               background-color: transparent;
               border: 0;

@@ -7,8 +7,8 @@ const state = {
   route: "", //一级路由
   subRoute: "", //二级路由
   yearTypeList: [
-    { value: "1", label: "CY" },
-    { value: "2", label: "FY" }
+    { id: "1", label: "CY" },
+    { id: "2", label: "FY" }
   ], // cy表示自然年， fy表示财年，1月1日~12月31日为一个自然年；7月1日~6月30日为一个财年
 
   categoryList: [
@@ -70,10 +70,12 @@ const actions = {
   /**
    * 根据选择的role，获取对应的client
    */
-  fetch_client_by_role({ state, getters, commit, dispatch }) {
+  fetch_client_by_role({ state, getters, commit, dispatch }, data) {
     return new Promise((resolve, reject) => {
+      let roleId = data ? data.role_id : state.role;
+
       fetch
-        .post("/home/corp_filter", { role: state.role })
+        .post("/home/corp_filter", { role_id: roleId })
         .then(res => {
           res = {
             ret: 0,

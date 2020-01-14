@@ -19,23 +19,26 @@
                     <div class="more-permission">
                         <div class="permission"
                             v-if="value.permission==0">
-                            <i class="iconfont mas-earth"></i>
+
                             <hy-box>
-                                <span>{{permissionMap[0].label}}</span>
+                                <i class="iconfont mas-earth"></i>
+                                <span> {{permissionMap[0].label}}</span>
                             </hy-box>
                         </div>
                         <div class="permission"
                             v-if="value.permission==1">
-                            <i class="iconfont mas-lock"></i>
+
                             <hy-box>
-                                <span>{{permissionMap[1].label}}</span>
+                                <i class="iconfont mas-lock"></i>
+                                <span> {{permissionMap[1].label}}</span>
                             </hy-box>
                         </div>
                         <div class="permission"
                             v-if="value.permission==2">
-                            <i class="iconfont mas-user"></i>
+
                             <hy-box>
-                                <span>{{permissionMap[2].label}}</span>
+                                <i class="iconfont mas-user"></i>
+                                <span> {{permissionMap[2].label}}</span>
                             </hy-box>
                         </div>
                     </div>
@@ -69,18 +72,24 @@
                     <div class="more-permission">
                         <span class="permission"
                             v-if="value.permission==0">
-                            <i class="iconfont mas-earth"></i>
-                            <hy-box>{{permissionMap[0].label}}</hy-box>
+                            <hy-box>
+                                <i class="iconfont mas-earth"></i>
+                                <span> {{permissionMap[0].label}}</span>
+                            </hy-box>
                         </span>
                         <span class="permission"
                             v-if="value.permission==1">
-                            <i class="iconfont mas-lock"></i>
-                            <hy-box>{{permissionMap[1].label}}</hy-box>
+                            <hy-box>
+                                <i class="iconfont mas-lock"></i>
+                                <span> {{permissionMap[1].label}}</span>
+                            </hy-box>
                         </span>
                         <span class="permission"
                             v-if="value.permission==2">
-                            <i class="iconfont mas-user"></i>
-                            <hy-box>{{permissionMap[2].label}}</hy-box>
+                            <hy-box>
+                                <i class="iconfont mas-user"></i>
+                                <span> {{permissionMap[2].label}}</span>
+                            </hy-box>
                         </span>
                         <span class="arrow">
                             <el-popover placement="bottom"
@@ -91,19 +100,19 @@
                                 <div>
                                     <hy-box class="popver-item"
                                         :gap="false"
-                                        :disabled="isReadOnly"
+                                        :disabled="value.disabled || isReadOnly"
                                         @click="handle_change_permission(0)">
                                         <i class="iconfont mas-earth"></i> {{permissionMap[0].label}}
                                     </hy-box>
                                     <hy-box class="popver-item"
                                         :gap="false"
-                                        :disabled="isReadOnly"
+                                        :disabled="value.disabled || isReadOnly"
                                         @click="handle_change_permission(1)">
                                         <i class="iconfont mas-lock"></i> {{permissionMap[1].label}}
                                     </hy-box>
                                     <hy-box class="popver-item"
                                         :gap="false"
-                                        :disabled="isReadOnly"
+                                        :disabled="value.disabled || isReadOnly"
                                         @click="handle_change_permission(2)">
                                         <i class="iconfont mas-user"></i> {{permissionMap[2].label}}
                                     </hy-box>
@@ -130,19 +139,19 @@
 
                                 <hy-box class="popver-item"
                                     :gap="false"
-                                    :disabled="isReadOnly"
+                                    :disabled="value.disabled || isReadOnly"
                                     @click="handle_change_operate('copy')">
                                     <i class="iconfont mas-copy"></i> Copy
                                 </hy-box>
                                 <hy-box class="popver-item"
                                     :gap="false"
-                                    :disabled="isReadOnly"
+                                    :disabled="value.disabled || isReadOnly"
                                     @click="handle_change_operate('edit')">
                                     <i class="iconfont mas-edit"></i> Edit
                                 </hy-box>
                                 <hy-box v-if="value.is_edit==1"
                                     :gap="false"
-                                    :disabled="isReadOnly"
+                                    :disabled="value.disabled || isReadOnly"
                                     class="popver-item"
                                     @click="handle_change_operate('delete')">
                                     <i class="el-icon-delete"></i> Delete

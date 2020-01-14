@@ -359,7 +359,7 @@ export default {
       flex: 1;
       contain: strict;
 
-      /deep/ .el-table {
+      ::v-deep .el-table {
         td,
         th {
           padding: 0;
